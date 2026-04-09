@@ -5,6 +5,7 @@ import { Project } from '../../../domain/entities/Project';
 
 export interface CreateProjectDTO {
   title: string;
+  description: string;
   pmCandidateId: string;
 }
 
@@ -21,10 +22,10 @@ export class CreateProjectUseCase {
       throw new Error("User proposed as Project Manager could not be found.");
     }
 
-    pmCandidate.promoteToPM();
-
     const projectId = this.idGeneratorService.generate();
-    const project = Project.create(projectId, dto.title, pmCandidate.id);
+    const project = Project.create(projectId, dto.title, dto.description);
+
+    project.assignPM(pmCandidate);
 
     await this.userRepository.update(pmCandidate);
     await this.projectRepository.save(project);
