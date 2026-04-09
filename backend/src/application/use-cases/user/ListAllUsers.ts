@@ -3,7 +3,8 @@ import { UserRole } from "../../../domain/entities/User";
 
 export interface UserSummaryDTO {
   id: string;
-  username: string;
+  name: string;
+  emailid: string;
   role: UserRole;
 }
 
@@ -16,7 +17,8 @@ export class ListAllUsers {
     // Map entities to DTOs to hide sensitive data (passwords)
     return users.map(user => ({
       id: user.id,
-      username: user.username,
+      name: user.name,
+      emailid: user.emailid,
       role: user.role
     }));
   }

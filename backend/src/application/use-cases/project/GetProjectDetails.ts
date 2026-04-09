@@ -5,7 +5,7 @@ export interface ProjectDetailsResponse {
     id: string;
     title: string;
     pmName: string;
-    members: { id: string; username: string }[];
+    members: { id: string; name: string }[];
   }
   
   export class GetProjectDetails {
@@ -25,8 +25,8 @@ export interface ProjectDetailsResponse {
       return {
         id: project.id,
         title: project.title,
-        pmName: pm?.username || "Unknown",
-        members: members.map(m => ({ id: m.id, username: m.username }))
+        pmName: pm?.name || "Unknown",
+        members: members.map(m => ({ id: m.id, name: m.name }))
       };
     }
   }

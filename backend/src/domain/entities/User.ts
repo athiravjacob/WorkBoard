@@ -7,7 +7,8 @@ export enum UserRole {
 export class User {
   constructor(
     public readonly id: string,
-    public username: string,
+    public name: string,
+    public emailid: string,
     public passwordHash: string,
     public role: UserRole
   ) {}
@@ -20,12 +21,13 @@ export class User {
     this.role = UserRole.PM;
   }
 
-  static create(id: string, username: string, passwordHash: string): User {
-    if (username.length < 3) throw new Error("Username too short");
+  static create(id: string, name: string, emailid: string, passwordHash: string): User {
+    if (name.length < 3) throw new Error("Name too short");
     
     return new User(
       id,
-      username,
+      name,
+      emailid,
       passwordHash,
       UserRole.USER
     );

@@ -4,13 +4,15 @@ import { IHashService } from "../../services/IHashService";
 import { IIdGeneratorService } from "../../services/IIdGeneratorService";
 
 export interface RegisterUserRequest {
-  username: string;
+  name: string;
+  emailid: string;
   password: string;
 }
 
 export interface RegisterUserResponse {
   id: string;
-  username: string;
+  name: string;
+  emailid: string;
 }
 
 export class RegisterUser {
@@ -21,21 +23,22 @@ export class RegisterUser {
   ) {}
 
   async execute(request: RegisterUserRequest): Promise<RegisterUserResponse> {
-    const existingUser = await this.userRepository.findByUsername(request.username);
+    const existingUser = await this.userRepository.findByEmailid(request.emailid);
     if (existingUser) {
-      throw new Error("User with this username already exists");
+      throw new Error("User with this emailid already exists");
     }
 
     const hashedPassword = await this.hashService.hash(request.password);
 
     const id = this.idGenerator.generate();
-    const user = User.create(id, request.username, hashedPassword);
+    const user = User.create(id, request.name, request.emailid, hashedPassword);
 
     await this.userRepository.save(user);
 
     return {
       id: user.id,
-      username: user.username
+      name: user.name,
+      emailid: user.emailid
     };
   }
 }

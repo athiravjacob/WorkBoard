@@ -7,7 +7,8 @@ export interface GetProfileRequest {
 
 export interface UserProfileResponse {
   id: string;
-  username: string;
+  name: string;
+  emailid: string;
   role: UserRole;
 }
 
@@ -23,7 +24,8 @@ export class GetMyProfile {
 
     return {
       id: user.id,
-      username: user.username,
+      name: user.name,
+      emailid: user.emailid,
       role: user.role
     };
   }

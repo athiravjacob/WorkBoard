@@ -4,13 +4,14 @@ import { ITokenService } from "../../services/ITokenService";
 import { UserRole } from "../../../domain/entities/User";
 
 export interface LoginRequest {
-  username: string;
+  emailid: string;
   password: string;
 }
 
 export interface LoginResponse {
   id: string;
-  username: string;
+  name: string;
+  emailid: string;
   role: UserRole;
   accessToken: string;
   refreshToken: string;
@@ -25,15 +26,15 @@ export class LoginUser {
 
   async execute(request: LoginRequest): Promise<LoginResponse> {
     // 1. Check existence
-    const user = await this.userRepository.findByUsername(request.username);
+    const user = await this.userRepository.findByEmailid(request.emailid);
     if (!user) {
-      throw new Error("Invalid username or password");
+      throw new Error("Invalid emailid or password");
     }
 
     // 2. Compare password
     const isPasswordValid = await this.hashService.compare(request.password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new Error("Invalid username or password");
+      throw new Error("Invalid emailid or password");
     }
 
     // 3. Generate Tokens
@@ -49,7 +50,8 @@ export class LoginUser {
     // 4. Return Data
     return {
       id: user.id,
-      username: user.username,
+      name: user.name,
+      emailid: user.emailid,
       role: user.role,
       accessToken,
       refreshToken
