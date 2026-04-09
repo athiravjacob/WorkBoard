@@ -42,7 +42,18 @@ export class Project {
     this._description = newDescription;
   }
 
-  
+  public assignPM(user: User): void {
+    if (!user) {
+      throw new Error('User object is null or invalid.');
+    }
+
+    if (user.role !== UserRole.PM && user.role !== UserRole.ADMIN) {
+      user.promoteToPM();
+    }
+
+    this._pmId = user.id;
+    this.addTeamMember(user.id);
+  }
 
   public addTeamMember(userId: string): void {
     if (!this._teamMemberIds.includes(userId)) {
