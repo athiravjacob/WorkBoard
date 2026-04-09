@@ -62,6 +62,9 @@ export class Project {
   }
 
   public removeTeamMember(userId: string): void {
+    if (userId === this._pmId) {
+      throw new Error("Cannot remove the Project Manager from the team list.");
+  }
     this._teamMemberIds = this._teamMemberIds.filter(id => id !== userId);
   }
 }
