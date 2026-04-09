@@ -1,11 +1,11 @@
 import { IUserRepository } from "../../../domain/repositories/IUserRepository";
 import { UserRole } from "../../../domain/entities/User";
 
-export interface GetProfileRequest {
+export interface GetProfileDTO {
   userId: string;
 }
 
-export interface UserProfileResponse {
+export interface UserProfileDTO {
   id: string;
   name: string;
   emailid: string;
@@ -15,8 +15,8 @@ export interface UserProfileResponse {
 export class GetMyProfile {
   constructor(private userRepository: IUserRepository) {}
 
-  async execute(request: GetProfileRequest): Promise<UserProfileResponse> {
-    const user = await this.userRepository.findById(request.userId);
+  async execute(dto: GetProfileDTO): Promise<UserProfileDTO> {
+    const user = await this.userRepository.findById(dto.userId);
 
     if (!user) {
       throw new Error("UserNotFound");

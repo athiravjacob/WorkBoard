@@ -3,12 +3,12 @@ import { IHashService } from "../../services/IHashService";
 import { ITokenService } from "../../services/ITokenService";
 import { UserRole } from "../../../domain/entities/User";
 
-export interface LoginRequest {
+export interface LoginDTO {
   emailid: string;
   password: string;
 }
 
-export interface LoginResponse {
+export interface LoginResultDTO {
   id: string;
   name: string;
   emailid: string;
@@ -24,15 +24,15 @@ export class LoginUser {
     private tokenService: ITokenService
   ) {}
 
-  async execute(request: LoginRequest): Promise<LoginResponse> {
+  async execute(dto: LoginDTO): Promise<LoginResultDTO> {
     // 1. Check existence
-    const user = await this.userRepository.findByEmailid(request.emailid);
+    const user = await this.userRepository.findByEmailid(dto.emailid);
     if (!user) {
       throw new Error("Invalid emailid or password");
     }
 
     // 2. Compare password
-    const isPasswordValid = await this.hashService.compare(request.password, user.passwordHash);
+    const isPasswordValid = await this.hashService.compare(dto.password, user.passwordHash);
     if (!isPasswordValid) {
       throw new Error("Invalid emailid or password");
     }
