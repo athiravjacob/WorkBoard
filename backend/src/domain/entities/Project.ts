@@ -1,38 +1,56 @@
 import { User, UserRole } from './User';
 
 export class Project {
+  private _teamMemberIds: string[] = [];
+  private _pmId?: string | null = null;
+  
   constructor(
     public readonly id: string,
-    public title: string,
-    public pmId: string,
-    public teamMemberIds: string[] = []
+    private _title: string,
+    private _description: string
   ) {
     this.validate();
   }
 
-  static create(id: string, title: string, pmId: string): Project {
-    return new Project(id, title, pmId);
+  get title(): string { return this._title; }
+  get description(): string { return this._description; }
+  get pmId(): string | null | undefined { return this._pmId; }
+  get teamMemberIds(): string[] { return [...this._teamMemberIds]; }
+
+  static create(id: string, title: string, description: string): Project {
+    return new Project(id, title, description);
   }
 
   public validate(): void {
-    if (!this.title || this.title.trim() === '') {
+    if (!this._title || this._title.trim() === '') {
       throw new Error('Project must have a valid title.');
     }
-    if (!this.pmId || this.pmId.trim() === '') {
-      throw new Error('A valid User ID must be provided as the PM.');
-    }
+    
   }
 
-  public assignPM(pm: User): void {
-    if (pm.role !== UserRole.PM && pm.role !== UserRole.ADMIN) {
-      throw new Error('Assigned user must have the PM role to lead projects.');
+  public updateTitle(newTitle: string): void {
+    if (!newTitle || newTitle.trim() === '') {
+      throw new Error('Project title cannot be empty.');
     }
-    this.pmId = pm.id;
+    this._title = newTitle;
   }
+
+  public updateDescription(newDescription: string): void {
+    if (!newDescription || newDescription.trim() === '') {
+      throw new Error('Project description cannot be empty.');
+    }
+    this._description = newDescription;
+  }
+
+  
 
   public addTeamMember(userId: string): void {
-    if (!this.teamMemberIds.includes(userId)) {
-      this.teamMemberIds.push(userId);
+    if (!this._teamMemberIds.includes(userId)) {
+      this._teamMemberIds.push(userId);
     }
+  }
+
+  public removeTeamMember(userId: string): void {
+    this._teamMemberIds = this._teamMemberIds.filter(id => id !== userId);
   }
 }
