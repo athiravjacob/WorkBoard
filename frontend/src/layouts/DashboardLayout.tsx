@@ -1,7 +1,8 @@
 import React from 'react';
-import { LayoutDashboard, LogOut } from 'lucide-react';
+import { LogOut } from 'lucide-react'; // Keeps logout in header if needed, but I'll probably keep it clean
 import { useAuthStore } from '../features/auth/store/useAuthStore';
 import { useLogout } from '../features/auth/hooks/useLogout';
+import { Sidebar } from './Sidebar';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -21,46 +22,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
-      {/* Sidebar */}
-      <aside className="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-20">
-        {/* Logo Section */}
-        <div className="h-16 flex items-center px-6 border-b border-slate-100 shrink-0">
-          <div className="bg-indigo-600 p-1.5 rounded-lg mr-3">
-            <LayoutDashboard className="w-5 h-5 text-white" />
-          </div>
-          <span className="text-xl font-bold tracking-tight text-slate-800">WorkBoard</span>
-        </div>
-
-        {/* Navigation Placeholder */}
-        <nav className="flex-1 py-6 px-4 overflow-y-auto">
-          <div className="space-y-1">
-             <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Menu</p>
-             {/* Placeholder items */}
-             <div className="h-10 w-full bg-slate-50 rounded-lg border border-dashed border-slate-200 flex items-center px-3 mb-2">
-                <div className="w-4 h-4 bg-slate-200 rounded mr-3" />
-                <div className="h-3 bg-slate-100 rounded w-24" />
-             </div>
-             <div className="h-10 w-full bg-slate-50 rounded-lg border border-dashed border-slate-200 flex items-center px-3 mb-2">
-                <div className="w-4 h-4 bg-slate-200 rounded mr-3" />
-                <div className="h-3 bg-slate-100 rounded w-20" />
-             </div>
-             <div className="h-10 w-full bg-slate-50 rounded-lg border border-dashed border-slate-200 flex items-center px-3">
-                <div className="w-4 h-4 bg-slate-200 rounded mr-3" />
-                <div className="h-3 bg-slate-100 rounded w-28" />
-             </div>
-          </div>
-        </nav>
-        
-        {/* Bottom Sidebar section (Profile short-cut or settings could go here) */}
-        <div className="p-4 border-t border-slate-100">
-           <div className="bg-slate-50 p-3 rounded-xl flex items-center">
-              <div className="flex-1">
-                 <p className="text-xs font-medium text-slate-500">Need help?</p>
-                 <p className="text-xs text-slate-400">Check documentation</p>
-              </div>
-           </div>
-        </div>
-      </aside>
+      {/* Role-Based Sidebar */}
+      <Sidebar />
 
       {/* Main Container */}
       <div className="flex-1 flex flex-col ml-64 overflow-hidden">
@@ -73,7 +36,7 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
             <span className="text-sm font-semibold text-slate-800">Overview</span>
           </div>
 
-          {/* Right Side: User Profile & Logout */}
+          {/* Right Side: User Profile & Logout Link */}
           <div className="flex items-center space-x-6">
             <div className="flex items-center space-x-4">
               <div className="flex flex-col items-end">
@@ -90,16 +53,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
               </div>
             </div>
 
-            <div className="h-8 w-[1px] bg-slate-200 mx-2" />
 
-            <button 
-              onClick={handleLogout}
-              disabled={logout.isPending}
-              className="p-2 text-slate-400 hover:text-rose-500 hover:bg-rose-50 rounded-lg transition-all duration-200 disabled:opacity-50"
-              title="Logout"
-            >
-              <LogOut className={`w-5 h-5 ${logout.isPending ? 'animate-pulse' : ''}`} />
-            </button>
+            
           </div>
         </header>
 
