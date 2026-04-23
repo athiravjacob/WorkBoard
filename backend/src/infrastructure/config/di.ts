@@ -10,15 +10,19 @@ import { JwtTokenService } from '../services/JwtTokenService';
 import { LoginUser } from '../../application/use-cases/auth/LoginUser';
 import { CreateProjectUseCase } from '../../application/use-cases/project/CreateProject';
 
+import { ListAllUsers } from '../../application/use-cases/user/ListAllUsers';
+import { GetMyProfile } from '../../application/use-cases/user/GetMyProfile';
+
 // 1. Infrastructure Layer: Instantiate the implementations
 const userRepository = new MongooseUserRepository();
 const projectRepository = new MongooseProjectRepository();
 const hashService = new BcryptHashService();
 const idGenerator = new UuidGeneratorService();
-
 const tokenGenerator = new JwtTokenService()
 
+
 // 2. Application Layer: Instantiate the use case, injecting the dependencies
+// Auth Use Cases
 const registerUser = new RegisterUser(
   userRepository,
   hashService,
@@ -31,14 +35,19 @@ const loginUser = new LoginUser(
   tokenGenerator
 )
 
+// Project Use Cases
 const createProject = new CreateProjectUseCase(
   projectRepository,
   userRepository,
   idGenerator
 );
 
+// User Use Cases
+const listAllUsers = new ListAllUsers(userRepository);
+const getMyProfile = new GetMyProfile(userRepository);
+
 
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
 export const authController = new AuthController(registerUser, loginUser);
-export const userController = new UserController();
+export const userController = new UserController(listAllUsers, getMyProfile);
 export const projectController = new ProjectController(createProject);
