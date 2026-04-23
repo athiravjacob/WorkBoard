@@ -1,8 +1,9 @@
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link } from 'react-router-dom';
 import { LoginForm } from '../features/auth/components/LoginForm';
 import { ProtectedRoute } from '../features/auth/components/ProtectedRoute';
 import { RegisterForm } from '../features/auth/components/RegisterForm';
 import { DashboardLayout } from '../layouts/DashboardLayout';
+import { CreateProjectForm } from '../features/projects/components/CreateProjectForm';
 
 
 // Enhanced placeholder components
@@ -35,9 +36,12 @@ const Dashboard = () => (
              <div className="w-8 h-8 bg-slate-200 rounded animate-pulse" />
           </div>
           <p className="text-slate-400 font-medium">No recent project activity found</p>
-          <button className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition">
+          <Link 
+            to="/admin/projects/create"
+            className="mt-4 px-4 py-2 bg-indigo-600 text-white rounded-lg text-sm font-semibold hover:bg-indigo-700 transition inline-block"
+          >
              Create New Project
-          </button>
+          </Link>
        </div>
     </div>
   </div>
@@ -70,6 +74,7 @@ export const AppRoutes = () => {
       {/* Admin Only Routes */}
       <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
         <Route path="/admin/projects" element={<DashboardLayout><AdminPanel /></DashboardLayout>} />
+        <Route path="/admin/projects/create" element={<DashboardLayout><CreateProjectForm /></DashboardLayout>} />
       </Route>
 
       {/* Default Redirect */}
