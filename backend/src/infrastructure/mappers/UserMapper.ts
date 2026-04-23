@@ -9,7 +9,7 @@ export class UserMapper {
     return new User(
       raw._id,
       raw.name,
-      raw.emailid,
+      raw.email,
       raw.passwordHash,
       raw.role
     );
@@ -22,7 +22,7 @@ export class UserMapper {
     return {
       _id: user.id, // Optional depending on whether inserting or updating, helps maintain reference
       name: user.name,
-      emailid: user.emailid,
+      email: user.email,
       passwordHash: user.passwordHash,
       role: user.role
     };

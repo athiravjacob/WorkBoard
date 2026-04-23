@@ -10,8 +10,9 @@ export class MongooseUserRepository implements IUserRepository {
     return UserMapper.toDomain(document);
   }
 
-  async findByEmailid(emailid: string): Promise<User | null> {
-    const document = await UserModel.findOne({ emailid }).exec();
+  async findByEmail(email: string): Promise<User | null> {
+    const document = await UserModel.findOne({ email }).exec();
+    console.log(document?.name)
     if (!document) return null;
     return UserMapper.toDomain(document);
   }

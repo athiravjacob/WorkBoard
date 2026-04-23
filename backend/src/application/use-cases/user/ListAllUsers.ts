@@ -4,7 +4,7 @@ import { UserRole } from "../../../domain/entities/User";
 export interface UserSummaryDTO {
   id: string;
   name: string;
-  emailid: string;
+  email: string;
   role: UserRole;
 }
 
@@ -18,7 +18,7 @@ export class ListAllUsers {
     return users.map(user => ({
       id: user.id,
       name: user.name,
-      emailid: user.emailid,
+      email: user.email,
       role: user.role
     }));
   }

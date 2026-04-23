@@ -8,7 +8,7 @@ export interface ICreateProjectUseCase {
   }): Promise<any>;
 }
 
-export class AdminController {
+export class ProjectController {
   constructor(private readonly createProjectUseCase: ICreateProjectUseCase) {}
 
   public createProject = async (req: Request, res: Response): Promise<void> => {
@@ -35,4 +35,8 @@ export class AdminController {
       res.status(500).json({ error: error.message || "Internal server error during project creation" });
     }
   };
+
+  public getProjectById = async(req:Request,res:Response):Promise<void>=>{
+    
+  }
 }

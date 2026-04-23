@@ -3,7 +3,7 @@ import { MongooseProjectRepository } from '../repositories/MongooseProjectReposi
 import { RegisterUser } from '../../application/use-cases/auth/RegisterUser';
 import { UserController } from '../../presentation/controllers/UserController';
 import { AuthController } from '../../presentation/controllers/AuthController';
-import { AdminController } from '../../presentation/controllers/AdminController';
+import { ProjectController } from '../../presentation/controllers/ProjectController';
 import { BcryptHashService } from '../services/BcryptHashService';
 import { UuidGeneratorService } from '../services/UuidGeneratorService';
 import { JwtTokenService } from '../services/JwtTokenService';
@@ -41,4 +41,4 @@ const createProject = new CreateProjectUseCase(
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
 export const authController = new AuthController(registerUser, loginUser);
 export const userController = new UserController();
-export const adminController = new AdminController(createProject);
+export const projectController = new ProjectController(createProject);

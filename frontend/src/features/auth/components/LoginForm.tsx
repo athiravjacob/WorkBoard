@@ -1,30 +1,15 @@
 import React, { useState } from 'react';
-import api from '../../../lib/axios';
-import { useAuthStore } from '../store/useAuthStore';
-import { useNavigate } from 'react-router-dom';
+import { useLogin } from '../hooks/useLogin';
+import { Link } from 'react-router-dom';
 
 export const LoginForm = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
-  const setAuth = useAuthStore((state) => state.setAuth);
-  const navigate = useNavigate();
+  const login = useLogin();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      // Calling your backend login API
-      const response = await api.post('/login', { emailid: email, password });
-      
-      const { user, accessToken } = response.data;
-      
-      // Saving to our Zustand store
-      setAuth(user, accessToken);
-      
-      alert("Login Successful!");
-      navigate('/dashboard'); // We will create this page next
-    } catch (error: any) {
-      alert(error.response?.data?.message || "Login Failed");
-    }
+    login.mutate({ email, password });
   };
 
   return (
@@ -44,10 +29,18 @@ export const LoginForm = () => {
             className="w-full p-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
             onChange={(e) => setPassword(e.target.value)}
           />
-          <button type="submit" className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition">
-            Sign In
+          <button 
+            type="submit" 
+            disabled={login.isPending}
+            className="w-full bg-blue-600 text-white p-3 rounded-lg font-semibold hover:bg-blue-700 transition disabled:opacity-50"
+          >
+            {login.isPending ? 'Logging in...' : 'Sign In'}
           </button>
         </div>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don't have an account?{' '}
+          <Link to="/register" className="text-blue-600 font-semibold hover:underline">Register</Link>
+        </p>
       </form>
     </div>
   );

@@ -4,7 +4,7 @@ import { UserRole } from '../../../domain/entities/User';
 export interface IUserDocument extends Document<string> {
   _id: string;
   name: string;
-  emailid: string;
+  email: string;
   passwordHash: string;
   role: UserRole;
   createdAt: Date;
@@ -14,7 +14,7 @@ export interface IUserDocument extends Document<string> {
 const UserSchema: Schema = new Schema({
   _id: { type: String, required: true },
   name: { type: String, required: true },
-  emailid: { type: String, required: true, unique: true },
+  email: { type: String, required: true, unique: true },
   passwordHash: { type: String, required: true },
   role: { 
     type: String, 

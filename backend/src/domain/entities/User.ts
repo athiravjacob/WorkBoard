@@ -1,29 +1,31 @@
+
+
 export enum UserRole {
-  ADMIN = 'ADMIN',
+  USER = 'USER',
   PM = 'PM',
-  USER = 'USER'
+  ADMIN = 'ADMIN'
 }
 
 export class User {
   constructor(
     public readonly id: string,
     private _name: string,
-    private _emailid: string,
+    private _email: string,
     private _passwordHash: string,
     private _role: UserRole
   ) {}
 
   get name(): string { return this._name; }
-  get emailid(): string { return this._emailid; }
+  get email(): string { return this._email; }
   get passwordHash(): string { return this._passwordHash; }
   get role(): UserRole { return this._role; }
 
-  public updateProfile(name: string, emailid: string): void {
+  public updateProfile(name: string, email: string): void {
     if (name.length < 3) throw new Error("Name too short");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailid)) throw new Error("Invalid email format");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Invalid email format");
     
     this._name = name;
-    this._emailid = emailid;
+    this._email = email;
   }
 
   public promoteToPM(): void {
@@ -34,14 +36,14 @@ export class User {
     this._role = UserRole.PM;
   }
 
-  static create(id: string, name: string, emailid: string, passwordHash: string): User {
+  static create(id: string, name: string, email: string, passwordHash: string): User {
     if (name.length < 3) throw new Error("Name too short");
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(emailid)) throw new Error("Invalid email format");
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) throw new Error("Invalid email format");
     
     return new User(
       id,
       name,
-      emailid,
+      email,
       passwordHash,
       UserRole.USER
     );

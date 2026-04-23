@@ -3,7 +3,7 @@ export type Role = 'ADMIN' | 'PM' | 'USER';
 export interface User {
   id: string;
   name: string;
-  emailid: string; 
+  email: string;
   role: Role;
 }
 
@@ -12,3 +12,4 @@ export interface LoginResponse {
   user: User;
   accessToken: string; 
 }
+

@@ -1,15 +1,15 @@
 import { Request, Response } from "express";
-import { setRefreshTokenCookie } from "../utils/CookieHelper";
+import { setRefreshTokenCookie, clearRefreshTokenCookie } from "../utils/CookieHelper";
 
 export interface IRegisterUserUseCase {
   execute(data: {
     name: string;
-    emailid: string;
+    email: string;
     password: string;
   }): Promise<any>;
 }
 export interface ILoginUserUsecase {
-  execute(data: { emailid: string; password: string }): Promise<any>;
+  execute(data: { email: string; password: string }): Promise<any>;
 }
 
 export class AuthController {
@@ -21,6 +21,7 @@ export class AuthController {
   public register = async (req: Request, res: Response): Promise<void> => {
     try {
       const { name, email, password } = req.body;
+      console.log(req.body)
 
       if (!name || !email || !password) {
         res
@@ -31,15 +32,15 @@ export class AuthController {
 
       const result = await this.registerUser.execute({
         name,
-        emailid: email,
-        password,
+        email,
+        password
       });
 
       res.status(201).json(result);
     } catch (error: any) {
       console.error("Registration error:", error);
       if (
-        error.message === "User with this emailid already exists" ||
+        error.message === "User with this email already exists" ||
         error.name === "ValidationError"
       ) {
         res.status(400).json({ error: error.message });
@@ -54,12 +55,13 @@ export class AuthController {
   public login = async (req: Request, res: Response): Promise<void> => {
     try {
       const { email, password } = req.body;
+      console.log(req.body)
       if (!email || !password) {
         res.status(400).json({ error: "email, and password are required" });
         return;
       }
       const result = await this.loginUser.execute({
-        emailid: email,
+        email: email,
         password,
       });
 
@@ -70,7 +72,7 @@ export class AuthController {
         user: {
           id: result.id,
           name: result.name,
-          email: result.emailid,
+          email: result.email,
           role: result.role,
         },
         accessToken: result.accessToken,
@@ -90,5 +92,10 @@ export class AuthController {
           .json({ error: "An unexpected error occurred during login" });
       }
     }
+  };
+
+  public logout = async (req: Request, res: Response): Promise<void> => {
+    clearRefreshTokenCookie(res);
+    res.status(200).json({ message: "Logged out successfully" });
   };
 }

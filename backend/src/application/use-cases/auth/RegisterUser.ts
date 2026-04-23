@@ -5,14 +5,14 @@ import { IIdGeneratorService } from "../../services/IIdGeneratorService";
 
 export interface RegisterUserDTO {
   name: string;
-  emailid: string;
+  email: string;
   password: string;
 }
 
 export interface RegisterUserResultDTO {
   id: string;
   name: string;
-  emailid: string;
+  email: string;
 }
 
 export class RegisterUser {
@@ -23,22 +23,23 @@ export class RegisterUser {
   ) {}
 
   async execute(dto: RegisterUserDTO): Promise<RegisterUserResultDTO> {
-    const existingUser = await this.userRepository.findByEmailid(dto.emailid);
+    const existingUser = await this.userRepository.findByEmail(dto.email);
+    console.log(existingUser)
     if (existingUser) {
-      throw new Error("User with this emailid already exists");
+      throw new Error("User with this email already exists");
     }
 
     const hashedPassword = await this.hashService.hash(dto.password);
 
     const id = this.idGenerator.generate();
-    const user = User.create(id, dto.name, dto.emailid, hashedPassword);
+    const user = User.create(id, dto.name, dto.email, hashedPassword);
 
     await this.userRepository.save(user);
 
     return {
       id: user.id,
       name: user.name,
-      emailid: user.emailid
+      email: user.email
     };
   }
 }

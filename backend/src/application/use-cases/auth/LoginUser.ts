@@ -4,14 +4,14 @@ import { ITokenService } from "../../services/ITokenService";
 import { UserRole } from "../../../domain/entities/User";
 
 export interface LoginDTO {
-  emailid: string;
+  email: string;
   password: string;
 }
 
 export interface LoginResultDTO {
   id: string;
   name: string;
-  emailid: string;
+  email: string;
   role: UserRole;
   accessToken: string;
   refreshToken: string;
@@ -26,15 +26,15 @@ export class LoginUser {
 
   async execute(dto: LoginDTO): Promise<LoginResultDTO> {
     // 1. Check existence
-    const user = await this.userRepository.findByEmailid(dto.emailid);
+    const user = await this.userRepository.findByEmail(dto.email);
     if (!user) {
-      throw new Error("Invalid emailid or password");
+      throw new Error("Invalid email or password");
     }
 
     // 2. Compare password
     const isPasswordValid = await this.hashService.compare(dto.password, user.passwordHash);
     if (!isPasswordValid) {
-      throw new Error("Invalid emailid or password");
+      throw new Error("Invalid email or password");
     }
 
     // 3. Generate Tokens
@@ -51,7 +51,7 @@ export class LoginUser {
     return {
       id: user.id,
       name: user.name,
-      emailid: user.emailid,
+      email: user.email,
       role: user.role,
       accessToken,
       refreshToken

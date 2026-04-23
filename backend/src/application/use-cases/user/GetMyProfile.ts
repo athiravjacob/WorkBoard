@@ -8,7 +8,7 @@ export interface GetProfileDTO {
 export interface UserProfileDTO {
   id: string;
   name: string;
-  emailid: string;
+  email: string;
   role: UserRole;
 }
 
@@ -25,7 +25,7 @@ export class GetMyProfile {
     return {
       id: user.id,
       name: user.name,
-      emailid: user.emailid,
+      email: user.email,
       role: user.role
     };
   }
