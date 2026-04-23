@@ -29,6 +29,14 @@ export class MongooseProjectRepository implements IProjectRepository {
     await ProjectModel.findByIdAndDelete(id).exec();
   }
 
+  async findAll(): Promise<Project[]> {
+    const documents = await ProjectModel.find()
+      .populate('pmId', 'name email') 
+      .exec();
+      
+    return documents.map(doc => ProjectMapper.toDomain(doc));
+  }
+
   async getTeamMembers(projectId: string): Promise<User[]> {
     const projectDoc = await ProjectModel.findById(projectId).exec();
     if (!projectDoc || !projectDoc.teamMemberIds.length) return [];

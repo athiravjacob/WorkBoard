@@ -7,7 +7,9 @@ export class Project {
   constructor(
     public readonly id: string,
     private _title: string,
-    private _description: string
+    private _description: string,
+    public readonly createdAt?: Date,
+    public readonly updatedAt?: Date
   ) {
     this.validate();
   }

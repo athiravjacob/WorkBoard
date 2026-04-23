@@ -1,7 +1,5 @@
 import React from 'react';
-import { LogOut } from 'lucide-react'; // Keeps logout in header if needed, but I'll probably keep it clean
 import { useAuthStore } from '../features/auth/store/useAuthStore';
-import { useLogout } from '../features/auth/hooks/useLogout';
 import { Sidebar } from './Sidebar';
 
 interface DashboardLayoutProps {
@@ -10,16 +8,12 @@ interface DashboardLayoutProps {
 
 export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   const { user } = useAuthStore();
-  const logout = useLogout();
 
   const getInitial = (name: string) => {
     return name ? name.charAt(0).toUpperCase() : '?';
   };
 
-  const handleLogout = () => {
-    logout.mutate();
-  };
-
+  
   return (
     <div className="flex h-screen bg-slate-50 font-sans text-slate-900">
       {/* Role-Based Sidebar */}

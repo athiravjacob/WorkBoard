@@ -6,7 +6,9 @@ export class ProjectMapper {
     const project = new Project(
       raw._id,
       raw.title,
-      raw.description
+      raw.description,
+      raw.createdAt,
+      raw.updatedAt
     );
 
     // Reconstruct private fields if there's a way to do it via public methods or reflection

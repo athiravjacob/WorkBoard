@@ -4,6 +4,7 @@ import { ProtectedRoute } from '../features/auth/components/ProtectedRoute';
 import { RegisterForm } from '../features/auth/components/RegisterForm';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { CreateProjectForm } from '../features/projects/components/CreateProjectForm';
+import { ProjectList } from '../features/projects/components/ProjectList';
 
 
 // Enhanced placeholder components
@@ -47,17 +48,7 @@ const Dashboard = () => (
   </div>
 );
 
-const AdminPanel = () => (
-  <div className="space-y-6">
-    <h1 className="text-2xl font-bold text-slate-800">Admin Control Panel</h1>
-    <p className="text-slate-500">System-wide configurations and project management.</p>
-    <div className="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-      <div className="h-64 flex items-center justify-center border-2 border-dashed border-slate-100 rounded-xl">
-        <span className="text-slate-400">User Management Table Placeholder</span>
-      </div>
-    </div>
-  </div>
-);
+
 
 export const AppRoutes = () => {
   return (
@@ -73,7 +64,7 @@ export const AppRoutes = () => {
 
       {/* Admin Only Routes */}
       <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
-        <Route path="/admin/projects" element={<DashboardLayout><AdminPanel /></DashboardLayout>} />
+        <Route path="/admin/projects" element={<DashboardLayout><ProjectList /></DashboardLayout>} />
         <Route path="/admin/projects/create" element={<DashboardLayout><CreateProjectForm /></DashboardLayout>} />
       </Route>
 

@@ -8,8 +8,37 @@ export interface ICreateProjectUseCase {
   }): Promise<any>;
 }
 
+export interface IListAllProjectsUseCase {
+  execute(): Promise<any[]>;
+}
+
 export class ProjectController {
-  constructor(private readonly createProjectUseCase: ICreateProjectUseCase) {}
+  constructor(
+    private readonly createProjectUseCase: ICreateProjectUseCase,
+    private readonly listAllProjectsUseCase: IListAllProjectsUseCase
+  ) {}
+
+  public getAllProjects = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const projects = await this.listAllProjectsUseCase.execute();
+      
+      // Map domain entities to plain DTOs to avoid private field prefixes (_) in JSON
+      const projectDTOs = projects.map(project => ({
+        id: project.id,
+        title: project.title,
+        description: project.description,
+        pmId: project.pmId,
+        teamMemberIds: project.teamMemberIds,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt
+      }));
+
+      res.status(200).json(projectDTOs);
+    } catch (error: any) {
+      console.error("Fetch projects error:", error);
+      res.status(500).json({ error: "Failed to fetch projects" });
+    }
+  };
 
   public createProject = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -28,7 +57,15 @@ export class ProjectController {
 
       res.status(201).json({
         message: "Project created successfully",
-        project,
+        project: {
+          id: project.id,
+          title: project.title,
+          description: project.description,
+          pmId: project.pmId,
+          teamMemberIds: project.teamMemberIds,
+          createdAt: project.createdAt,
+          updatedAt: project.updatedAt
+        },
       });
     } catch (error: any) {
       console.error("Create project error:", error);
@@ -37,6 +74,5 @@ export class ProjectController {
   };
 
   public getProjectById = async(req:Request,res:Response):Promise<void>=>{
-    
   }
 }

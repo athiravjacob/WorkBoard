@@ -9,6 +9,7 @@ import { UuidGeneratorService } from '../services/UuidGeneratorService';
 import { JwtTokenService } from '../services/JwtTokenService';
 import { LoginUser } from '../../application/use-cases/auth/LoginUser';
 import { CreateProjectUseCase } from '../../application/use-cases/project/CreateProject';
+import { ListAllProjects } from '../../application/use-cases/project/ListAllProjects';
 
 import { ListAllUsers } from '../../application/use-cases/user/ListAllUsers';
 import { GetMyProfile } from '../../application/use-cases/user/GetMyProfile';
@@ -35,12 +36,13 @@ const loginUser = new LoginUser(
   tokenGenerator
 )
 
-// Project Use Cases
 const createProject = new CreateProjectUseCase(
   projectRepository,
   userRepository,
   idGenerator
 );
+
+const listAllProjects = new ListAllProjects(projectRepository);
 
 // User Use Cases
 const listAllUsers = new ListAllUsers(userRepository);
@@ -50,4 +52,4 @@ const getMyProfile = new GetMyProfile(userRepository);
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
 export const authController = new AuthController(registerUser, loginUser);
 export const userController = new UserController(listAllUsers, getMyProfile);
-export const projectController = new ProjectController(createProject);
+export const projectController = new ProjectController(createProject, listAllProjects);
