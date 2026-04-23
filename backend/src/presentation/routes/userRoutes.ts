@@ -1,7 +1,8 @@
-import { Router } from 'express';
-import {userController} from '../../infrastructure/config/di'
+import { Router } from "express";
+import { userController } from "../../infrastructure/config/di";
 const userRouter = Router();
-
-userRouter.post('/register', userController.register);
+userRouter.get("/test", (req, res) => {
+  res.send("User route working");
+});
 
 export { userRouter };
