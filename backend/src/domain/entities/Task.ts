@@ -253,7 +253,7 @@ export class Task {
         this.markUpdated();
     }
 
-    public addProgressNote(actor: Actor, note: string): void {
+    public addProgressNote(actor: Actor, note: string): TaskProgress {
         if (
             actor.id !== this._assignedTo &&
             actor.role !== UserRole.PM
@@ -265,13 +265,16 @@ export class Task {
             throw new Error("Progress note cannot be empty");
         }
 
-        this._progressNotes.push({
+        const newNote: TaskProgress = {
             userId: actor.id,
             note,
             createdAt: new Date()
-        });
+        };
 
+        this._progressNotes.push(newNote);
         this.markUpdated();
+        
+        return newNote; // Return for response
     }
 
     // 🔁 Restore notes separately if needed

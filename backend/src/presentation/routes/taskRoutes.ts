@@ -25,4 +25,13 @@ router.patch(
     taskController.updateStatus
 );
 
+/**
+ * @route   POST /api/tasks/:taskId/notes
+ * @desc    Add a progress note to a task
+ */
+router.post(
+    "/:taskId/notes",
+    taskController.addTaskNote
+);
+
 export { router as taskRoutes };

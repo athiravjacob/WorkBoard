@@ -51,6 +51,13 @@ export class MongooseTaskRepository implements ITaskRepository {
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 
+    async addNote(taskId: string, note: { userId: string, note: string, createdAt: Date }): Promise<void> {
+        await TaskModel.updateOne(
+            { _id: taskId },
+            { $push: { progressNotes: note } }
+        ).exec();
+    }
+
     async update(task: Task): Promise<void> {
         await this.save(task);
     }

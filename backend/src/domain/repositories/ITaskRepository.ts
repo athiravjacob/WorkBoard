@@ -6,4 +6,5 @@ export interface ITaskRepository {
     findByProjectId(projectId: string): Promise<Task[]>;
     findByProjectIdAndAssignedTo(projectId: string, userId: string): Promise<Task[]>;
     findByAssignedTo(userId: string): Promise<Task[]>;
+    addNote(taskId: string, note: { userId: string, note: string, createdAt: Date }): Promise<void>;
 }

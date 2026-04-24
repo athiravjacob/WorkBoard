@@ -1,11 +1,12 @@
 import { Request, Response } from "express";
+import { GetProfileDTO, UserProfileDTO } from "../../application/use-cases/user/GetMyProfile";
 
 export interface IListAllUsersUseCase {
   execute(): Promise<any[]>;
 }
 
 export interface IGetMyProfileUseCase {
-  execute(data: { userId: string }): Promise<any>;
+  execute(dto: GetProfileDTO): Promise<UserProfileDTO>;
 }
 
 export class UserController {
@@ -16,7 +17,6 @@ export class UserController {
 
   /**
    * Fetches all registered users.
-   * Useful for selecting project managers or team members.
    */
   public getAllUsers = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -33,7 +33,6 @@ export class UserController {
    */
   public getMyProfile = async (req: Request, res: Response): Promise<void> => {
     try {
-      // Assuming userId is attached to req.user by an auth middleware (e.g. ProtectedRoute equivalent in backend)
       const userId = (req as any).user?.id;
 
       if (!userId) {

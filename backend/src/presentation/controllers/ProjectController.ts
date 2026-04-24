@@ -1,11 +1,8 @@
 import { Request, Response } from "express";
+import { CreateProjectDTO } from "../../application/use-cases/project/CreateProject";
 
 export interface ICreateProjectUseCase {
-  execute(data: {
-    title: string;
-    description: string;
-    pmCandidateId: string;
-  }): Promise<any>;
+  execute(data: CreateProjectDTO): Promise<any>;
 }
 
 export interface IListAllProjectsUseCase {
@@ -32,15 +29,7 @@ export class ProjectController {
     try {
       const projects = await this.listAllProjectsUseCase.execute();
       
-      const projectDTOs = projects.map((project: any) => ({
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        pmId: project.pmId,
-        teamMemberIds: project.teamMemberIds,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }));
+      const projectDTOs = projects.map((project: any) => this.mapToDTO(project));
 
       res.status(200).json(projectDTOs);
     } catch (error: any) {
@@ -54,15 +43,7 @@ export class ProjectController {
       const pmId = req.user.id;
       const projects = await this.listManagedProjectsUseCase.execute(pmId);
       
-      const projectDTOs = projects.map((project: any) => ({
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        pmId: project.pmId,
-        teamMemberIds: project.teamMemberIds,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      }));
+      const projectDTOs = projects.map((project: any) => this.mapToDTO(project));
 
       res.status(200).json(projectDTOs);
     } catch (error: any) {
@@ -88,15 +69,7 @@ export class ProjectController {
 
       res.status(201).json({
         message: "Project created successfully",
-        project: {
-          id: project.id,
-          title: project.title,
-          description: project.description,
-          pmId: project.pmId,
-          teamMemberIds: project.teamMemberIds,
-          createdAt: project.createdAt,
-          updatedAt: project.updatedAt
-        },
+        project: this.mapToDTO(project),
       });
     } catch (error: any) {
       console.error("Create project error:", error);
@@ -113,18 +86,25 @@ export class ProjectController {
         res.status(404).json({ error: "Project not found" });
         return;
       }
-      res.status(200).json({
-        id: project.id,
-        title: project.title,
-        description: project.description,
-        pmId: project.pmId,
-        teamMemberIds: project.teamMemberIds,
-        createdAt: project.createdAt,
-        updatedAt: project.updatedAt
-      });
+      res.status(200).json(this.mapToDTO(project));
     } catch (error: any) {
       console.error("Get project by ID error:", error);
       res.status(500).json({ error: "Internal server error while fetching project" });
     }
   };
+
+  /**
+   * Helper to map Entity to DTO within the Presentation Layer
+   */
+  private mapToDTO(project: any) {
+    return {
+      id: project.id,
+      title: project.title,
+      description: project.description,
+      pmId: project.pmId,
+      teamMemberIds: project.teamMemberIds,
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt
+    };
+  }
 }
