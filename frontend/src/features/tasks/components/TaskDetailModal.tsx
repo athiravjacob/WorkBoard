@@ -80,7 +80,11 @@ export const TaskDetailModal: React.FC<TaskDetailModalProps> = ({ task, isOpen, 
 
         {/* Footer: Add Note Input */}
         <div className="p-8 pt-4 bg-slate-50/50 border-t border-slate-100">
-          <AddProgressNote taskId={task.id} assignedTo={task.assignedTo} />
+          <AddProgressNote 
+            taskId={task.id} 
+            projectId={task.projectId} 
+            assignedTo={task.assignedTo} 
+          />
         </div>
       </div>
     </div>

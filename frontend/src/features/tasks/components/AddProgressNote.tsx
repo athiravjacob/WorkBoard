@@ -5,13 +5,14 @@ import { Send, Loader2 } from 'lucide-react';
 
 interface AddProgressNoteProps {
   taskId: string;
+  projectId?: string;
   assignedTo?: string;
 }
 
-export const AddProgressNote: React.FC<AddProgressNoteProps> = ({ taskId, assignedTo }) => {
+export const AddProgressNote: React.FC<AddProgressNoteProps> = ({ taskId, projectId, assignedTo }) => {
   const [note, setNote] = useState('');
   const { user } = useAuthStore();
-  const { mutate: addNote, isPending } = useAddTaskNote();
+  const { mutate: addNote, isPending } = useAddTaskNote(projectId);
 
   // Permissions: Only PM or Assigned User can add notes
   const canAddNote = user?.role === 'PM' || user?.role === 'ADMIN' || user?.id === assignedTo;

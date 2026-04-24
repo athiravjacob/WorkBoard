@@ -3,7 +3,7 @@ import { taskService } from '../services/taskService';
 
 export const useMyTasks = () => {
   return useQuery({
-    queryKey: ['userTasks'],
+    queryKey: ['tasks', 'me'],
     queryFn: taskService.getMyTasks
   });
 };

@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { taskService } from '../services/taskService';
 import { toast } from 'react-hot-toast';
 
-export const useAddTaskNote = () => {
+export const useAddTaskNote = (projectId?: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
@@ -10,9 +10,12 @@ export const useAddTaskNote = () => {
       taskService.addTaskNote(taskId, note),
     onSuccess: () => {
       // Invalidate all task related queries to show the new note
-      queryClient.invalidateQueries({ queryKey: ['projectTasks'] });
-      queryClient.invalidateQueries({ queryKey: ['userTasks'] });
-      queryClient.invalidateQueries({ queryKey: ['tasks'] }); // Catch-all for any task list
+      if (projectId) {
+        queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'tasks'] });
+      } else {
+        queryClient.invalidateQueries({ queryKey: ['projects'] });
+      }
+      queryClient.invalidateQueries({ queryKey: ['tasks', 'me'] });
       toast.success('Note added!');
     },
     onError: (error: any) => {

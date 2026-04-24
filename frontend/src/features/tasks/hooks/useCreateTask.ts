@@ -9,7 +9,7 @@ export const useCreateTask = (projectId: string) => {
   return useMutation({
     mutationFn: (data: CreateTaskParams) => taskService.createTask(projectId, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['tasks', 'project', projectId] });
+      queryClient.invalidateQueries({ queryKey: ['projects', projectId, 'tasks'] });
       toast.success('Task created successfully!');
     },
     onError: (error: any) => {

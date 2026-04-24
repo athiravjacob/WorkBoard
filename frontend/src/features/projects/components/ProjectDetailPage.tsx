@@ -1,13 +1,9 @@
 import React, { useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import api from '../../../lib/axios';
-import { taskService } from '../../tasks/services/taskService';
 import { useAuthStore } from '../../auth/store/useAuthStore';
 import { CreateTaskModal } from '../../tasks/components/CreateTaskModal';
 import { TaskDetailModal } from '../../tasks/components/TaskDetailModal';
 import { RedoFeedbackModal } from '../../tasks/components/RedoFeedbackModal';
-import type{ Task as TaskInterface } from '../../tasks/services/taskService';
 import { 
   Folder, 
   Users, 
@@ -23,66 +19,29 @@ import {
   Check,
   RotateCcw
 } from 'lucide-react';
-import toast from 'react-hot-toast';
-
-interface Project {
-  id: string;
-  title: string;
-  description: string;
-  pmId: string;
-  pmDetails?: {
-    name: string;
-    email: string;
-  };
-  teamMembers?: {
-    id: string;
-    name: string;
-    email: string;
-  }[];
-  createdAt: string;
-}
+import { useProject } from '../hooks/useProject';
+import { useProjectTasks } from '../../tasks/hooks/useProjectTasks';
+import { useUpdateTaskStatus } from '../../tasks/hooks/useUpdateTaskStatus';
 
 export const ProjectDetailPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { user } = useAuthStore();
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
-  const queryClient = useQueryClient();
-  const [selectedTask, setSelectedTask] = useState<TaskInterface | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const [isRedoModalOpen, setIsRedoModalOpen] = useState(false);
-  const [taskToRedo, setTaskToRedo] = useState<TaskInterface | null>(null);
-
-  // Status Mutation
-  const statusMutation = useMutation({
-    mutationFn: ({ taskId, status, note }: { taskId: string, status: string, note?: string }) => 
-      taskService.updateTaskStatus(taskId, status, note),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['projectTasks', projectId] });
-      toast.success('Task updated successfully');
-      setIsRedoModalOpen(false);
-      setTaskToRedo(null);
-    },
-    onError: (error: any) => {
-      toast.error(error.response?.data?.error || 'Failed to update task');
-    }
-  });
+  const [taskToRedoId, setTaskToRedoId] = useState<string | null>(null);
 
   // 1. Fetch Project Details
-  const { data: project, isLoading: isProjectLoading } = useQuery<Project>({
-    queryKey: ['project', projectId],
-    queryFn: async () => {
-      const response = await api.get(`/projects/${projectId}`);
-      return response.data;
-    }
-  });
+  const { data: project, isLoading: isProjectLoading } = useProject(projectId);
 
   // 2. Fetch Tasks
-  const { data: tasks, isLoading: isTasksLoading } = useQuery<TaskInterface[]>({
-    queryKey: ['projectTasks', projectId],
-    queryFn: async () => {
-      const response = await api.get(`/projects/${projectId}/tasks`);
-      return response.data.data;
-    }
-  });
+  const { data: tasks, isLoading: isTasksLoading } = useProjectTasks(projectId);
+
+  // Status Mutation
+  const statusMutation = useUpdateTaskStatus(projectId!);
+  
+  const selectedTask = tasks?.find(t => t.id === selectedTaskId) || null;
+  const taskToRedo = tasks?.find(t => t.id === taskToRedoId) || null;
 
   const getStatusStyles = (status: string) => {
     switch (status) {
@@ -163,7 +122,7 @@ export const ProjectDetailPage: React.FC = () => {
                 {tasks?.map((task) => (
                   <div 
                     key={task.id} 
-                    onClick={() => setSelectedTask(task)}
+                    onClick={() => setSelectedTaskId(task.id)}
                     className="group flex flex-col md:flex-row md:items-center justify-between p-5 bg-white rounded-2xl border border-slate-100 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-500/5 transition-all duration-300 cursor-pointer"
                   >
                     <div className="space-y-2">
@@ -189,7 +148,7 @@ export const ProjectDetailPage: React.FC = () => {
                           </button>
                           <button
                             onClick={() => {
-                              setTaskToRedo(task);
+                              setTaskToRedoId(task.id);
                               setIsRedoModalOpen(true);
                             }}
                             disabled={statusMutation.isPending}
@@ -269,15 +228,15 @@ export const ProjectDetailPage: React.FC = () => {
 
       <TaskDetailModal 
         task={selectedTask}
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
+        isOpen={!!selectedTaskId}
+        onClose={() => setSelectedTaskId(null)}
       />
 
       <RedoFeedbackModal 
         isOpen={isRedoModalOpen}
         onClose={() => {
           setIsRedoModalOpen(false);
-          setTaskToRedo(null);
+          setTaskToRedoId(null);
         }}
         onConfirm={(note) => {
           if (taskToRedo) {

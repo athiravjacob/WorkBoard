@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMyTasks } from '../hooks/useMyTasks';
 import { useUpdateTaskStatus } from '../hooks/useUpdateTaskStatus';
 import { TaskDetailModal } from './TaskDetailModal';
-import type{ Task } from '../services/taskService';
+
 import { 
   CheckCircle2, 
   Circle, 
@@ -15,9 +15,11 @@ import {
 } from 'lucide-react';
 
 export const UserTasksPage: React.FC = () => {
-  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
+  const [selectedTaskId, setSelectedTaskId] = useState<string | null>(null);
   const { data: tasks, isLoading } = useMyTasks();
   const { mutate: updateStatus, isPending } = useUpdateTaskStatus();
+
+  const selectedTask = tasks?.find(t => t.id === selectedTaskId) || null;
 
   const getStatusConfig = (status: string) => {
     switch (status) {
@@ -86,7 +88,7 @@ export const UserTasksPage: React.FC = () => {
               return (
                 <div 
                   key={task.id} 
-                  onClick={() => setSelectedTask(task)}
+                  onClick={() => setSelectedTaskId(task.id)}
                   className="group flex flex-col md:flex-row md:items-center justify-between p-8 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer"
                 >
                   <div className="flex items-start space-x-6">
@@ -135,8 +137,8 @@ export const UserTasksPage: React.FC = () => {
       {/* Task Detail Modal */}
       <TaskDetailModal 
         task={selectedTask}
-        isOpen={!!selectedTask}
-        onClose={() => setSelectedTask(null)}
+        isOpen={!!selectedTaskId}
+        onClose={() => setSelectedTaskId(null)}
       />
     </div>
   );
