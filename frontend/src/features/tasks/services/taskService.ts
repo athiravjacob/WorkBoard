@@ -15,6 +15,12 @@ export interface Task {
   assignedTo?: string;
   projectId: string;
   createdAt: string;
+  progressNotes?: {
+    userId: string;
+    userName?: string;
+    note: string;
+    createdAt: string;
+  }[];
 }
 
 export interface CreateTaskParams {
@@ -39,8 +45,13 @@ export const taskService = {
     return response.data;
   },
 
-  updateTaskStatus: async (taskId: string, status: string) => {
-    const response = await api.patch(`/tasks/${taskId}/status`, { status });
+  updateTaskStatus: async (taskId: string, status: string, redoNote?: string) => {
+    const response = await api.patch(`/tasks/${taskId}/status`, { status, redoNote });
+    return response.data;
+  },
+
+  addTaskNote: async (taskId: string, note: string) => {
+    const response = await api.post(`/tasks/${taskId}/notes`, { note });
     return response.data;
   }
 };

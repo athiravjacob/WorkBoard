@@ -170,6 +170,7 @@ export class TaskController {
             assignedTo: task.assignedTo,
             assignedToDetails: task.assignedToDetails,
             projectDetails: task.projectDetails,
+            progressNotes: task.progressNotes, // Now includes userName if populated
             createdAt: task.createdAt,
             updatedAt: task.updatedAt
         };

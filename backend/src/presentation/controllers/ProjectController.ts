@@ -102,7 +102,9 @@ export class ProjectController {
       title: project.title,
       description: project.description,
       pmId: project.pmId,
+      pmDetails: project.pmDetails,
       teamMemberIds: project.teamMemberIds,
+      teamMembers: project.teamMembers,
       createdAt: project.createdAt,
       updatedAt: project.updatedAt
     };

@@ -10,6 +10,7 @@ export enum TaskStatus {
 
 export interface TaskProgress {
     userId: string;
+    userName?: string; // Add name for UI display
     note: string;
     createdAt: Date;
 }
@@ -274,7 +275,7 @@ export class Task {
         this._progressNotes.push(newNote);
         this.markUpdated();
         
-        return newNote; // Return for response
+        return newNote; 
     }
 
     // 🔁 Restore notes separately if needed

@@ -2,30 +2,39 @@ import { Project } from '../../domain/entities/Project';
 import { IProjectDocument } from '../database/models/ProjectModel';
 
 export class ProjectMapper {
-  public static toDomain(raw: IProjectDocument): Project {
+  public static toDomain(raw: any): Project {
     const project = new Project(
-      raw._id,
+      raw._id.toString(),
       raw.title,
       raw.description,
       raw.createdAt,
       raw.updatedAt
     );
 
-    // Reconstruct private fields if there's a way to do it via public methods or reflection
-    // Since Project has private members and no setter for pmId/teamMemberIds in constructor,
-    // we might need to use methods like assignPM (careful with logic though)
-    // or just assume the entity allows some form of hydration.
-    
-    // Looking at Project.ts, it has addTeamMember and assignPM.
-    // However, assignPM also promotes the user to PM role.
-    // In a mapper, we usually want to just restore the state.
-    
-    // If I can't access private members directly, I'll use a hack or suggest the user adds a hydration method.
-    // For now, I'll use (project as any) to bypass private visibility during mapping if necessary,
-    // or better, if the project entity is designed for DDD, it should have a static 'reconstitute' method.
-    
-    (project as any)._pmId = raw.pmId;
-    (project as any)._teamMemberIds = raw.teamMemberIds || [];
+    // Handle PM Details (Populated)
+    if (raw.pmId && typeof raw.pmId === 'object' && ('name' in raw.pmId)) {
+      project.pmDetails = {
+        name: raw.pmId.name,
+        email: raw.pmId.email
+      };
+      (project as any)._pmId = raw.pmId._id.toString();
+    } else {
+      (project as any)._pmId = raw.pmId?.toString();
+    }
+
+    // Handle Team Member Details (Populated)
+    if (Array.isArray(raw.teamMemberIds)) {
+      if (raw.teamMemberIds.length > 0 && typeof raw.teamMemberIds[0] === 'object' && ('name' in raw.teamMemberIds[0])) {
+        project.teamMembers = raw.teamMemberIds.map((u: any) => ({
+          id: (u._id || u.id).toString(),
+          name: u.name,
+          email: u.email
+        }));
+        (project as any)._teamMemberIds = raw.teamMemberIds.map((u: any) => (u._id || u.id).toString());
+      } else {
+        (project as any)._teamMemberIds = raw.teamMemberIds.map((id: any) => id.toString());
+      }
+    }
 
     return project;
   }

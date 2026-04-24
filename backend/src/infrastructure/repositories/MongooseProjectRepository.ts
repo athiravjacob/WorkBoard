@@ -35,6 +35,7 @@ export class MongooseProjectRepository implements IProjectRepository {
   async findAll(): Promise<Project[]> {
     const documents = await ProjectModel.find()
       .populate('pmId', 'name email') 
+      .populate('teamMemberIds', 'name email') 
       .exec();
       
     return documents.map(doc => ProjectMapper.toDomain(doc));
@@ -43,7 +44,7 @@ export class MongooseProjectRepository implements IProjectRepository {
   async findByPmId(pmId: string): Promise<Project[]> {
     const documents = await ProjectModel.find({ pmId })
       .populate('pmId', 'name email')
-      .populate('teamMemberIds', 'name')
+      .populate('teamMemberIds', 'name email')
       .exec();
       
     return documents.map(doc => ProjectMapper.toDomain(doc));

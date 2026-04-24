@@ -19,7 +19,11 @@ export class MongooseTaskRepository implements ITaskRepository {
     }
 
     async findById(id: string): Promise<Task | null> {
-        const doc = await TaskModel.findById(id).populate('assignedTo', 'name email').exec();
+        const doc = await TaskModel.findById(id)
+            .populate('assignedTo', 'name email')
+            .populate('progressNotes.userId', 'name email')
+            .exec();
+            
         if (!doc) return null;
         
         return TaskMapper.toDomain(doc);
@@ -27,27 +31,30 @@ export class MongooseTaskRepository implements ITaskRepository {
 
     async findByProjectId(projectId: string): Promise<Task[]> {
         const docs = await TaskModel.find({ projectId })
-        .populate('assignedTo', 'name email') 
-        .sort({ createdAt: -1 })
-        .exec();
+            .populate('assignedTo', 'name email') 
+            .populate('progressNotes.userId', 'name email')
+            .sort({ createdAt: -1 })
+            .exec();
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 
     async findByProjectIdAndAssignedTo(projectId: string, userId: string): Promise<Task[]> {
         const docs = await TaskModel.find({ projectId, assignedTo: userId })
-        .populate('assignedTo', 'name email') 
-        .populate('projectId', 'title')
-        .sort({ createdAt: -1 })
-        .exec();
+            .populate('assignedTo', 'name email') 
+            .populate('projectId', 'title')
+            .populate('progressNotes.userId', 'name email')
+            .sort({ createdAt: -1 })
+            .exec();
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 
     async findByAssignedTo(userId: string): Promise<Task[]> {
         const docs = await TaskModel.find({ assignedTo: userId })
-        .populate('assignedTo', 'name email') 
-        .populate('projectId', 'title') // Populate project title for badge
-        .sort({ createdAt: -1 })
-        .exec();
+            .populate('assignedTo', 'name email') 
+            .populate('projectId', 'title') 
+            .populate('progressNotes.userId', 'name email')
+            .sort({ createdAt: -1 })
+            .exec();
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 

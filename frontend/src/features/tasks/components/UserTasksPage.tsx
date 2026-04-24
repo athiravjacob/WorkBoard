@@ -1,6 +1,8 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useMyTasks } from '../hooks/useMyTasks';
 import { useUpdateTaskStatus } from '../hooks/useUpdateTaskStatus';
+import { TaskDetailModal } from './TaskDetailModal';
+import type{ Task } from '../services/taskService';
 import { 
   CheckCircle2, 
   Circle, 
@@ -13,6 +15,7 @@ import {
 } from 'lucide-react';
 
 export const UserTasksPage: React.FC = () => {
+  const [selectedTask, setSelectedTask] = useState<Task | null>(null);
   const { data: tasks, isLoading } = useMyTasks();
   const { mutate: updateStatus, isPending } = useUpdateTaskStatus();
 
@@ -31,7 +34,8 @@ export const UserTasksPage: React.FC = () => {
     }
   };
 
-  const handleStatusChange = (taskId: string, currentStatus: string) => {
+  const handleStatusChange = (e: React.MouseEvent, taskId: string, currentStatus: string) => {
+    e.stopPropagation(); // Don't open modal when clicking status button
     if (isPending) return;
 
     let nextStatus = '';
@@ -82,7 +86,8 @@ export const UserTasksPage: React.FC = () => {
               return (
                 <div 
                   key={task.id} 
-                  className="group flex flex-col md:flex-row md:items-center justify-between p-8 hover:bg-slate-50/50 transition-all duration-300"
+                  onClick={() => setSelectedTask(task)}
+                  className="group flex flex-col md:flex-row md:items-center justify-between p-8 hover:bg-slate-50/50 transition-all duration-300 cursor-pointer"
                 >
                   <div className="flex items-start space-x-6">
                     <div className={`mt-1 p-2 rounded-xl border ${config.bg} ${config.border}`}>
@@ -90,7 +95,9 @@ export const UserTasksPage: React.FC = () => {
                     </div>
                     <div className="space-y-2">
                       <div className="flex items-center gap-3">
-                        <h3 className="text-lg font-bold text-slate-900 leading-none">{task.title}</h3>
+                        <h3 className="text-lg font-bold text-slate-900 group-hover:text-indigo-600 transition-colors">
+                          {task.title}
+                        </h3>
                         <span className="flex items-center px-2.5 py-0.5 rounded-full bg-indigo-50 text-indigo-600 text-[10px] font-black uppercase tracking-wider border border-indigo-100">
                           <Layout className="w-3 h-3 mr-1" />
                           {task.projectDetails?.title || 'General'}
@@ -109,7 +116,7 @@ export const UserTasksPage: React.FC = () => {
                     
                     {isActionable && (
                       <button 
-                        onClick={() => handleStatusChange(task.id, task.status)}
+                        onClick={(e) => handleStatusChange(e, task.id, task.status)}
                         disabled={isPending}
                         className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-bold hover:bg-indigo-600 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-slate-200"
                       >
@@ -124,6 +131,13 @@ export const UserTasksPage: React.FC = () => {
           </div>
         </div>
       )}
+
+      {/* Task Detail Modal */}
+      <TaskDetailModal 
+        task={selectedTask}
+        isOpen={!!selectedTask}
+        onClose={() => setSelectedTask(null)}
+      />
     </div>
   );
 };

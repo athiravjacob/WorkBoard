@@ -9,7 +9,9 @@ export class Project {
     private _title: string,
     private _description: string,
     public readonly createdAt?: Date,
-    public readonly updatedAt?: Date
+    public readonly updatedAt?: Date,
+    public pmDetails?: { name: string; email: string },
+    public teamMembers?: { id: string; name: string; email: string }[]
   ) {
     this.validate();
   }

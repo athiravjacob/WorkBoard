@@ -33,7 +33,7 @@ const TaskSchema: Schema = new Schema(
         projectId: { type: String, required: true, ref: 'Project' },
         assignedTo: { type: String, required: true, ref: 'User' },
         progressNotes: [{
-            userId: { type: String, required: true },
+            userId: { type: String, required: true, ref: 'User' },
             note: { type: String, required: true },
             createdAt: { type: Date, default: Date.now }
         }]
