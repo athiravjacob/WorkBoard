@@ -9,7 +9,7 @@ const projectRoutes = Router();
 // Apply auth middleware to all project routes
 // projectRoutes.use(authMiddleware);
 
-projectRoutes.post("/", roleMiddleware([UserRole.ADMIN]), projectController.createProject);
+projectRoutes.post("/", projectController.createProject);
 projectRoutes.get("/", projectController.getAllProjects);
 // projectRoutes.get("/:projectid", projectController.getProjectById);
 
