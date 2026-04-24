@@ -1,11 +1,31 @@
 import { Router } from "express";
-
+import { authMiddleware } from "../middlewares/AuthMiddleware";
+import { roleMiddleware } from "../middlewares/RoleMiddleware";
+import { UserRole } from "../../domain/entities/User";
 import { projectController } from "../../infrastructure/config/di";
+import { taskController } from "../di/TaskDI";
 
 const projectRoutes = Router();
 
-projectRoutes.post("/", projectController.createProject);
+// Apply auth middleware to all project routes
+projectRoutes.use(authMiddleware);
+
+projectRoutes.post("/", roleMiddleware([UserRole.ADMIN]), projectController.createProject);
 projectRoutes.get("/", projectController.getAllProjects);
-projectRoutes.get("/:projectid",projectController.getProjectById )
+projectRoutes.get("/:projectid", projectController.getProjectById);
+
+/**
+ * Task-related routes nested under projects
+ */
+projectRoutes.post(
+    "/:projectId/tasks", 
+    roleMiddleware([UserRole.PM]), 
+    taskController.createTask
+);
+
+projectRoutes.get(
+    "/:projectId/tasks", 
+    taskController.getTasksByProject
+);
 
 export { projectRoutes };
