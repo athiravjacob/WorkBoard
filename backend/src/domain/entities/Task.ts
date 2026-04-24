@@ -257,9 +257,10 @@ export class Task {
     public addProgressNote(actor: Actor, note: string): TaskProgress {
         if (
             actor.id !== this._assignedTo &&
-            actor.role !== UserRole.PM
+            actor.role !== UserRole.PM &&
+            actor.role !== UserRole.ADMIN
         ) {
-            throw new Error("Only assigned user or PM can add notes");
+            throw new Error("Only assigned user, PM, or Admin can add notes");
         }
 
         if (!note.trim()) {

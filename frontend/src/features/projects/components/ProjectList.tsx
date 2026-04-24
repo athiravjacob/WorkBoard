@@ -38,13 +38,15 @@ export const ProjectList = () => {
           <h1 className="text-3xl font-black text-slate-900 tracking-tight">Projects</h1>
           <p className="text-slate-500 mt-1 font-medium">Manage and monitor all active workspace initiatives.</p>
         </div>
-        <Link
-          to="/admin/projects/create"
-          className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:scale-95 whitespace-nowrap"
-        >
-          <Plus className="w-5 h-5 mr-2" />
-          Create New Project
-        </Link>
+        {currentUser?.role === 'ADMIN' && (
+          <Link
+            to="/admin/projects/create"
+            className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-2xl font-bold shadow-lg shadow-indigo-200 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:scale-95 whitespace-nowrap"
+          >
+            <Plus className="w-5 h-5 mr-2" />
+            Create New Project
+          </Link>
+        )}
       </div>
 
       {isLoading ? (
@@ -72,13 +74,15 @@ export const ProjectList = () => {
           <p className="text-slate-500 mt-3 mb-10 max-w-sm mx-auto text-base leading-relaxed">
             It looks like your project board is empty. Click the button below to launch your first initiative.
           </p>
-          <Link
-            to="/admin/projects/create"
-            className="inline-flex items-center px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:scale-95"
-          >
-            <Plus className="w-5 h-5 mr-2" />
-            Launch New Project
-          </Link>
+          {currentUser?.role === 'ADMIN' && (
+            <Link
+              to="/admin/projects/create"
+              className="inline-flex items-center px-8 py-4 bg-indigo-600 text-white rounded-2xl font-bold shadow-xl shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:scale-95"
+            >
+              <Plus className="w-5 h-5 mr-2" />
+              Launch New Project
+            </Link>
+          )}
         </div>
       )}
     </div>

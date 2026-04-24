@@ -125,7 +125,7 @@ export const ProjectDetailPage: React.FC = () => {
         </div>
         
         {/* Only PM can create tasks */}
-        {(user?.role === 'PM' || user?.role === 'ADMIN') && (
+        {(user?.role === 'PM') && (
            <button 
              onClick={() => setIsTaskModalOpen(true)}
              className="flex items-center px-6 py-3 bg-slate-900 text-white rounded-2xl text-sm font-bold hover:bg-indigo-600 hover:-translate-y-0.5 transition-all active:scale-95 shadow-xl shadow-slate-200"
