@@ -8,15 +8,22 @@ import { BcryptHashService } from '../services/BcryptHashService';
 import { UuidGeneratorService } from '../services/UuidGeneratorService';
 import { JwtTokenService } from '../services/JwtTokenService';
 import { LoginUser } from '../../application/use-cases/auth/LoginUser';
+import { MongooseTaskRepository } from '../repositories/MongooseTaskRepository';
 import { CreateProjectUseCase } from '../../application/use-cases/project/CreateProject';
 import { ListAllProjects } from '../../application/use-cases/project/ListAllProjects';
 
 import { ListAllUsers } from '../../application/use-cases/user/ListAllUsers';
 import { GetMyProfile } from '../../application/use-cases/user/GetMyProfile';
 
+import { CreateTaskUseCase } from '../../application/use-cases/task/CreateTask';
+import { GetTasksByProjectUseCase } from '../../application/use-cases/task/GetTasksByProject';
+import { GetMyTasksUseCase } from '../../application/use-cases/task/GetMyTasks';
+import { TaskController } from '../../presentation/controllers/TaskController';
+
 // 1. Infrastructure Layer: Instantiate the implementations
 const userRepository = new MongooseUserRepository();
 const projectRepository = new MongooseProjectRepository();
+const taskRepository = new MongooseTaskRepository();
 const hashService = new BcryptHashService();
 const idGenerator = new UuidGeneratorService();
 const tokenGenerator = new JwtTokenService()
@@ -48,8 +55,28 @@ const listAllProjects = new ListAllProjects(projectRepository);
 const listAllUsers = new ListAllUsers(userRepository);
 const getMyProfile = new GetMyProfile(userRepository);
 
+// Task Use Cases
+const createTask = new CreateTaskUseCase(
+  taskRepository,
+  userRepository,
+  projectRepository,
+  idGenerator
+);
+
+const getTasksByProject = new GetTasksByProjectUseCase(
+  taskRepository,
+  projectRepository
+);
+
+const getMyTasks = new GetMyTasksUseCase(taskRepository);
+
 
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
 export const authController = new AuthController(registerUser, loginUser);
 export const userController = new UserController(listAllUsers, getMyProfile);
 export const projectController = new ProjectController(createProject, listAllProjects);
+export const taskController = new TaskController(
+  createTask,
+  getTasksByProject,
+  getMyTasks
+);

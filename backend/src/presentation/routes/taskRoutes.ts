@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { authMiddleware } from '../middlewares/AuthMiddleware';
 import { roleMiddleware } from '../middlewares/RoleMiddleware';
 import { UserRole } from '../../domain/entities/User';
-import { taskController } from '../di/TaskDI';
+import { taskController } from '../../infrastructure/config/di';
 
 const router = Router();
 

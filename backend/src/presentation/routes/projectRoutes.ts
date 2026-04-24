@@ -2,8 +2,7 @@ import { Router } from "express";
 import { authMiddleware } from "../middlewares/AuthMiddleware";
 import { roleMiddleware } from "../middlewares/RoleMiddleware";
 import { UserRole } from "../../domain/entities/User";
-import { projectController } from "../../infrastructure/config/di";
-import { taskController } from "../di/TaskDI";
+import { projectController, taskController } from "../../infrastructure/config/di";
 
 const projectRoutes = Router();
 
