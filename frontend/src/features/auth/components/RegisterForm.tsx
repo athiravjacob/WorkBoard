@@ -1,70 +1,79 @@
 import React, { useState } from 'react';
-import {  Link } from 'react-router-dom';
 import { useRegister } from '../hooks/useRegister';
 
-export const RegisterForm = () => {
-    const [formData, setFormData] = useState({ name: '', email: '', password: '' });
-    
-    // Use our custom hook
-    const { mutate, isPending } = useRegister();
-  
-    const handleRegister = (e: React.FormEvent) => {
-      e.preventDefault();
-      mutate(formData); // Just call mutate!
-    };
+interface RegisterFormProps {
+  onToggle: () => void;
+}
+
+export const RegisterForm: React.FC<RegisterFormProps> = ({ onToggle }) => {
+  const [formData, setFormData] = useState({ name: '', email: '', password: '' });
+  const { mutate, isPending } = useRegister();
+
+  const handleRegister = (e: React.FormEvent) => {
+    e.preventDefault();
+    mutate(formData);
+  };
+
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-      <form onSubmit={handleRegister} className="p-8 bg-white shadow-xl rounded-2xl w-full max-w-md">
-        <h2 className="text-3xl font-extrabold mb-6 text-center text-gray-900">Create Account</h2>
-        
-        <div className="space-y-5">
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Full Name</label>
-            <input
-              type="text"
-              className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="John Doe"
-              onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-              required
-            />
-          </div>
+    <div className="w-full max-w-md px-8 py-10 bg-white">
+      <div className="mb-10">
+        <h2 className="text-3xl font-bold text-slate-800">Create Account</h2>
+        <p className="text-slate-500 mt-2">Join us to start managing your work efficiently</p>
+      </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Email Address</label>
-            <input
-              type="email"
-              className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="name@company.com"
-              onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-              required
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-gray-700">Password</label>
-            <input
-              type="password"
-              className="mt-1 w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
-              placeholder="••••••••"
-              onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-              required
-            />
-          </div>
-
-          <button 
-         type="submit" 
-         disabled={isPending} // Automatically handle loading state!
-         className="w-full bg-blue-600 disabled:bg-gray-400 ..."
-       >
-         {isPending ? 'Creating Account...' : 'Register'}
-       </button>
+      <form onSubmit={handleRegister} className="space-y-5">
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Full Name</label>
+          <input
+            type="text"
+            className="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+            placeholder="John Doe"
+            onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+            required
+          />
         </div>
 
-        <p className="mt-6 text-center text-sm text-gray-600">
-          Already have an account?{' '}
-          <Link to="/login" className="text-blue-600 font-semibold hover:underline">Log in</Link>
-        </p>
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Email Address</label>
+          <input
+            type="email"
+            className="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+            placeholder="name@company.com"
+            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+            required
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-slate-700 mb-1">Password</label>
+          <input
+            type="password"
+            className="w-full p-3 border border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 transition-all"
+            placeholder="••••••••"
+            onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+            required
+          />
+        </div>
+
+        <button 
+          type="submit" 
+          disabled={isPending}
+          className="w-full bg-indigo-600 text-white p-4 rounded-xl font-bold hover:bg-indigo-700 active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none shadow-lg shadow-indigo-200"
+        >
+          {isPending ? 'Creating Account...' : 'Get Started'}
+        </button>
       </form>
+
+      <div className="mt-8 text-center text-sm text-slate-600">
+        Already have an account?{' '}
+        <button 
+          type="button"
+          onClick={onToggle}
+          className="text-indigo-600 font-bold hover:text-indigo-700 transition-colors"
+        >
+          Sign in here
+        </button>
+      </div>
     </div>
   );
 };

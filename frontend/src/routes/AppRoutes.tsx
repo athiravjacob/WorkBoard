@@ -1,11 +1,9 @@
 import { Routes, Route, Navigate, Link } from 'react-router-dom';
-import { LoginForm } from '../features/auth/components/LoginForm';
+import { AuthPage } from '../features/auth/components/AuthPage';
 import { ProtectedRoute } from '../features/auth/components/ProtectedRoute';
-import { RegisterForm } from '../features/auth/components/RegisterForm';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { CreateProjectForm } from '../features/projects/components/CreateProjectForm';
 import { ProjectList } from '../features/projects/components/ProjectList';
-
 
 // Enhanced placeholder components
 const Dashboard = () => (
@@ -48,14 +46,12 @@ const Dashboard = () => (
   </div>
 );
 
-
-
 export const AppRoutes = () => {
   return (
     <Routes>
       {/* Public Routes */}
-      <Route path="/login" element={<LoginForm />} />
-      <Route path="/register" element={<RegisterForm/>} />
+      <Route path="/login" element={<AuthPage />} />
+      <Route path="/register" element={<AuthPage />} />
 
       {/* Protected Routes (Any logged in user) */}
       <Route element={<ProtectedRoute />}>
