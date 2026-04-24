@@ -24,8 +24,8 @@ export const AppRoutes = () => {
         <Route path="/tasks" element={<DashboardLayout><UserTasksPage /></DashboardLayout>} />
       </Route>
 
-      {/* Admin Only Routes */}
-      <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+      {/* Admin & PM Project Routes */}
+      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'PM']} />}>
         <Route path="/admin/projects" element={<DashboardLayout><ProjectList /></DashboardLayout>} />
         <Route path="/admin/projects/create" element={<DashboardLayout><CreateProjectForm /></DashboardLayout>} />
       </Route>

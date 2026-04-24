@@ -19,13 +19,7 @@ export const PMDashboard: React.FC = () => {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Page Header */}
-      <div>
-        <h1 className="text-3xl font-black text-slate-900 tracking-tight">My Managed Projects</h1>
-        <p className="text-slate-500 mt-1 font-medium italic">
-          Overview of initiatives currently under your leadership.
-        </p>
-      </div>
+
 
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
