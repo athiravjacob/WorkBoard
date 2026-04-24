@@ -22,8 +22,13 @@ export class MongooseTaskRepository implements ITaskRepository {
         return TaskMapper.toDomain(doc);
     }
 
-    async findAllByProject(projectId: string): Promise<Task[]> {
+    async findByProjectId(projectId: string): Promise<Task[]> {
         const docs = await TaskModel.find({ projectId }).sort({ createdAt: -1 });
+        return docs.map(doc => TaskMapper.toDomain(doc));
+    }
+
+    async findByProjectIdAndAssignedTo(projectId: string, userId: string): Promise<Task[]> {
+        const docs = await TaskModel.find({ projectId, assignedTo: userId }).sort({ createdAt: -1 });
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 
