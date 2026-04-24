@@ -18,8 +18,12 @@ export const projectService = {
   },
 
   getManagedProjects: async () => {
-    console.log("frontend managed project service")
     const response = await api.get('/projects/managed');
+    return response.data;
+  },
+
+  getProjectById: async (id: string) => {
+    const response = await api.get(`/projects/${id}`);
     console.log(response)
     return response.data;
   }

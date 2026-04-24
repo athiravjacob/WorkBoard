@@ -4,6 +4,7 @@ import { ProtectedRoute } from '../features/auth/components/ProtectedRoute';
 import { DashboardLayout } from '../layouts/DashboardLayout';
 import { CreateProjectForm } from '../features/projects/components/CreateProjectForm';
 import { ProjectList } from '../features/projects/components/ProjectList';
+import { ProjectDetailPage } from '../features/projects/components/ProjectDetailPage';
 
 // Enhanced placeholder components
 import { Dashboard } from '../features/dashboard/components/Dashboard';
@@ -18,6 +19,7 @@ export const AppRoutes = () => {
       {/* Protected Routes (Any logged in user) */}
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
+        <Route path="/projects/:projectId" element={<DashboardLayout><ProjectDetailPage /></DashboardLayout>} />
       </Route>
 
       {/* Admin Only Routes */}

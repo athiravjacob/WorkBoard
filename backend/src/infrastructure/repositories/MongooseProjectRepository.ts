@@ -8,7 +8,10 @@ import { UserMapper } from '../mappers/UserMapper';
 
 export class MongooseProjectRepository implements IProjectRepository {
   async findById(id: string): Promise<Project | null> {
-    const document = await ProjectModel.findById(id).exec();
+    const document = await ProjectModel.findById(id)
+    .populate('pmId', 'name email') 
+    .populate('teamMemberIds', 'name email') 
+    .exec();
     if (!document) return null;
     return ProjectMapper.toDomain(document);
   }

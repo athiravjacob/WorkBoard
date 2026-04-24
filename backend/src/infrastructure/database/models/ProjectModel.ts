@@ -15,8 +15,8 @@ const ProjectSchema: Schema = new Schema(
     _id: { type: String, required: true },
     title: { type: String, required: true },
     description: { type: String, required: true },
-    pmId: { type: String, default: null },
-    teamMemberIds: { type: [String], default: [] },
+    pmId: { type: String,ref: 'User', default: null },
+    teamMemberIds: { type: [String], ref: 'User',default: [] },
   },
   {
     timestamps: true,

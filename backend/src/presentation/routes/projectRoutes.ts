@@ -9,9 +9,10 @@ const projectRoutes = Router();
 // Apply auth middleware to all project routes
 projectRoutes.use(authMiddleware);
 
-projectRoutes.post("/", projectController.createProject);
-projectRoutes.get("/managed", projectController.getManagedProjects);
-projectRoutes.get("/", projectController.getAllProjects);
+projectRoutes.post("/", roleMiddleware([UserRole.ADMIN]), projectController.createProject);
+projectRoutes.get("/managed", roleMiddleware([UserRole.PM]), projectController.getManagedProjects);
+projectRoutes.get("/", roleMiddleware([UserRole.ADMIN, UserRole.PM]), projectController.getAllProjects);
+projectRoutes.get("/:projectId", projectController.getProjectById);
 
 /**
  * Task-related routes nested under projects

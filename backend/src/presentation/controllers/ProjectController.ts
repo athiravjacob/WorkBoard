@@ -16,11 +16,16 @@ export interface IListManagedProjectsUseCase {
   execute(pmId: string): Promise<any[]>;
 }
 
+export interface IGetProjectByIdUseCase {
+  execute(id: string): Promise<any | null>;
+}
+
 export class ProjectController {
   constructor(
     private readonly createProjectUseCase: ICreateProjectUseCase,
     private readonly listAllProjectsUseCase: IListAllProjectsUseCase,
-    private readonly listManagedProjectsUseCase: IListManagedProjectsUseCase
+    private readonly listManagedProjectsUseCase: IListManagedProjectsUseCase,
+    private readonly getProjectByIdUseCase: IGetProjectByIdUseCase
   ) {}
 
   public getAllProjects = async (req: Request, res: Response): Promise<void> => {
@@ -100,6 +105,27 @@ export class ProjectController {
     }
   };
 
-  public getProjectById = async(req:Request,res:Response):Promise<void>=>{
-  }
+  public getProjectById = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const { projectId } = req.params;
+      const project = await this.getProjectByIdUseCase.execute(projectId as string);
+
+      if (!project) {
+        res.status(404).json({ error: "Project not found" });
+        return;
+      }
+      res.status(200).json({
+        id: project.id,
+        title: project.title,
+        description: project.description,
+        pmId: project.pmId,
+        teamMemberIds: project.teamMemberIds,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt
+      });
+    } catch (error: any) {
+      console.error("Get project by ID error:", error);
+      res.status(500).json({ error: "Internal server error while fetching project" });
+    }
+  };
 }
