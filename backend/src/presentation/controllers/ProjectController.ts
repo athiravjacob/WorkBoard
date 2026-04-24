@@ -12,18 +12,22 @@ export interface IListAllProjectsUseCase {
   execute(): Promise<any[]>;
 }
 
+export interface IListManagedProjectsUseCase {
+  execute(pmId: string): Promise<any[]>;
+}
+
 export class ProjectController {
   constructor(
     private readonly createProjectUseCase: ICreateProjectUseCase,
-    private readonly listAllProjectsUseCase: IListAllProjectsUseCase
+    private readonly listAllProjectsUseCase: IListAllProjectsUseCase,
+    private readonly listManagedProjectsUseCase: IListManagedProjectsUseCase
   ) {}
 
   public getAllProjects = async (req: Request, res: Response): Promise<void> => {
     try {
       const projects = await this.listAllProjectsUseCase.execute();
       
-      // Map domain entities to plain DTOs to avoid private field prefixes (_) in JSON
-      const projectDTOs = projects.map(project => ({
+      const projectDTOs = projects.map((project: any) => ({
         id: project.id,
         title: project.title,
         description: project.description,
@@ -37,6 +41,28 @@ export class ProjectController {
     } catch (error: any) {
       console.error("Fetch projects error:", error);
       res.status(500).json({ error: "Failed to fetch projects" });
+    }
+  };
+
+  public getManagedProjects = async (req: any, res: Response): Promise<void> => {
+    try {
+      const pmId = req.user.id;
+      const projects = await this.listManagedProjectsUseCase.execute(pmId);
+      
+      const projectDTOs = projects.map((project: any) => ({
+        id: project.id,
+        title: project.title,
+        description: project.description,
+        pmId: project.pmId,
+        teamMemberIds: project.teamMemberIds,
+        createdAt: project.createdAt,
+        updatedAt: project.updatedAt
+      }));
+
+      res.status(200).json(projectDTOs);
+    } catch (error: any) {
+      console.error("Fetch managed projects error:", error);
+      res.status(500).json({ error: "Failed to fetch managed projects" });
     }
   };
 

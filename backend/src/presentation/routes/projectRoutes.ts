@@ -10,8 +10,8 @@ const projectRoutes = Router();
 // projectRoutes.use(authMiddleware);
 
 projectRoutes.post("/", projectController.createProject);
+projectRoutes.get("/managed", authMiddleware, projectController.getManagedProjects);
 projectRoutes.get("/", projectController.getAllProjects);
-// projectRoutes.get("/:projectid", projectController.getProjectById);
 
 /**
  * Task-related routes nested under projects

@@ -7,5 +7,6 @@ export interface IProjectRepository {
   update(project: Project): Promise<void>;
   delete(id: string): Promise<void>;
   findAll(): Promise<Project[]>;
+  findByPmId(pmId: string): Promise<Project[]>;
   getTeamMembers(projectId: string): Promise<User[]>;
 }

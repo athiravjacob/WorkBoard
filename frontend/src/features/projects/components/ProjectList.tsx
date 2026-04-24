@@ -10,8 +10,8 @@ export const ProjectList = () => {
   const { data: projects, isLoading, isError } = useProjects();
   const { data: users } = useUsers();
 
-  // Role Safety: Ensure only ADMIN can access this list
-  if (currentUser?.role !== 'ADMIN') {
+  // Role Safety: Ensure only ADMIN and PM can access this list
+  if (currentUser?.role !== 'ADMIN' && currentUser?.role !== 'PM') {
     return <Navigate to="/dashboard" replace />;
   }
 

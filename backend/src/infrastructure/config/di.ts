@@ -11,6 +11,7 @@ import { LoginUser } from '../../application/use-cases/auth/LoginUser';
 import { MongooseTaskRepository } from '../repositories/MongooseTaskRepository';
 import { CreateProjectUseCase } from '../../application/use-cases/project/CreateProject';
 import { ListAllProjects } from '../../application/use-cases/project/ListAllProjects';
+import { ListManagedProjects } from '../../application/use-cases/project/ListManagedProjects';
 
 import { ListAllUsers } from '../../application/use-cases/user/ListAllUsers';
 import { GetMyProfile } from '../../application/use-cases/user/GetMyProfile';
@@ -50,6 +51,7 @@ const createProject = new CreateProjectUseCase(
 );
 
 const listAllProjects = new ListAllProjects(projectRepository);
+const listManagedProjects = new ListManagedProjects(projectRepository);
 
 // User Use Cases
 const listAllUsers = new ListAllUsers(userRepository);
@@ -74,7 +76,7 @@ const getMyTasks = new GetMyTasksUseCase(taskRepository);
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
 export const authController = new AuthController(registerUser, loginUser);
 export const userController = new UserController(listAllUsers, getMyProfile);
-export const projectController = new ProjectController(createProject, listAllProjects);
+export const projectController = new ProjectController(createProject, listAllProjects, listManagedProjects);
 export const taskController = new TaskController(
   createTask,
   getTasksByProject,

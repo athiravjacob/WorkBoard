@@ -37,6 +37,15 @@ export class MongooseProjectRepository implements IProjectRepository {
     return documents.map(doc => ProjectMapper.toDomain(doc));
   }
 
+  async findByPmId(pmId: string): Promise<Project[]> {
+    const documents = await ProjectModel.find({ pmId })
+      .populate('pmId', 'name email')
+      .populate('teamMemberIds', 'name')
+      .exec();
+      
+    return documents.map(doc => ProjectMapper.toDomain(doc));
+  }
+
   async getTeamMembers(projectId: string): Promise<User[]> {
     const projectDoc = await ProjectModel.findById(projectId).exec();
     if (!projectDoc || !projectDoc.teamMemberIds.length) return [];
