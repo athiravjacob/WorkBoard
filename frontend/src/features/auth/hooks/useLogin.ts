@@ -11,6 +11,7 @@ export const useLogin = () => {
   return useMutation({
     mutationFn: authService.login,
     onSuccess: (data) => {
+      localStorage.setItem('token', data.accessToken);
       setAuth(data.user, data.accessToken);
       toast.success('Login successful!');
       navigate('/dashboard');

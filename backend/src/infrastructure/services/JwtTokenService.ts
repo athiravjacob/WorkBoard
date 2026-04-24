@@ -35,4 +35,18 @@ export class JwtTokenService implements ITokenService {
       return null;
     }
   }
+
+  public verifyRefreshToken(token: string): TokenPayload | null {
+    try {
+      const decoded = jwt.verify(token, this.refreshSecret) as TokenPayload;
+      return decoded;
+    } catch (error) {
+      if (error instanceof TokenExpiredError) {
+        console.warn('JWT Refresh Token expired');
+      } else if (error instanceof JsonWebTokenError) {
+        console.warn('Invalid JWT Refresh Token');
+      }
+      return null;
+    }
+  }
 }

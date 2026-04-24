@@ -8,6 +8,7 @@ import { BcryptHashService } from '../services/BcryptHashService';
 import { UuidGeneratorService } from '../services/UuidGeneratorService';
 import { JwtTokenService } from '../services/JwtTokenService';
 import { LoginUser } from '../../application/use-cases/auth/LoginUser';
+import { RefreshToken } from '../../application/use-cases/auth/RefreshToken';
 import { MongooseTaskRepository } from '../repositories/MongooseTaskRepository';
 import { CreateProjectUseCase } from '../../application/use-cases/project/CreateProject';
 import { ListAllProjects } from '../../application/use-cases/project/ListAllProjects';
@@ -44,6 +45,11 @@ const loginUser = new LoginUser(
   tokenGenerator
 )
 
+const refreshToken = new RefreshToken(
+  userRepository,
+  tokenGenerator
+)
+
 const createProject = new CreateProjectUseCase(
   projectRepository,
   userRepository,
@@ -74,7 +80,7 @@ const getMyTasks = new GetMyTasksUseCase(taskRepository);
 
 
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
-export const authController = new AuthController(registerUser, loginUser);
+export const authController = new AuthController(registerUser, loginUser, refreshToken);
 export const userController = new UserController(listAllUsers, getMyProfile);
 export const projectController = new ProjectController(createProject, listAllProjects, listManagedProjects);
 export const taskController = new TaskController(

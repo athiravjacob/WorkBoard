@@ -12,10 +12,15 @@ export interface ILoginUserUsecase {
   execute(data: { email: string; password: string }): Promise<any>;
 }
 
+export interface IRefreshTokenUseCase {
+  execute(refreshToken: string): Promise<{ accessToken: string }>;
+}
+
 export class AuthController {
   constructor(
     private readonly registerUser: IRegisterUserUseCase,
-    private readonly loginUser: ILoginUserUsecase
+    private readonly loginUser: ILoginUserUsecase,
+    private readonly refreshTokenUseCase: IRefreshTokenUseCase
   ) {}
 
   public register = async (req: Request, res: Response): Promise<void> => {
@@ -91,6 +96,24 @@ export class AuthController {
           .status(500)
           .json({ error: "An unexpected error occurred during login" });
       }
+    }
+  };
+
+  public refresh = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const refreshToken = req.cookies.refreshToken;
+
+      if (!refreshToken) {
+        res.status(401).json({ error: "Refresh token missing" });
+        return;
+      }
+
+      const { accessToken } = await this.refreshTokenUseCase.execute(refreshToken);
+
+      res.status(200).json({ accessToken });
+    } catch (error: any) {
+      console.error("Refresh token error:", error);
+      res.status(401).json({ error: error.message || "Invalid refresh token" });
     }
   };
 

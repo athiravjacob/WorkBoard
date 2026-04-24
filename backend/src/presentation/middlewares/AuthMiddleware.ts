@@ -26,6 +26,7 @@ export interface AuthRequest<
 export const authMiddleware = (req: AuthRequest, res: Response, next: NextFunction) => {
     // 1. Get token from Authorization header
     const authHeader = req.headers.authorization;
+    console.log(authHeader,"from backend")
     
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
         return res.status(401).json({ 

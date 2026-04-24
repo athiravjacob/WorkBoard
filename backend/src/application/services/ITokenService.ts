@@ -1,13 +1,11 @@
 export interface TokenPayload {
     userId: string;
     role?: string; 
-  }
+}
   
-  export interface ITokenService {
-
+export interface ITokenService {
     generateAccessToken(payload: TokenPayload): string;
-  
     generateRefreshToken(payload: TokenPayload): string;
-  
     verifyToken(token: string): TokenPayload | null;
-  }
+    verifyRefreshToken(token: string): TokenPayload | null;
+}
