@@ -7,11 +7,11 @@ import { projectController, taskController } from "../../infrastructure/config/d
 const projectRoutes = Router();
 
 // Apply auth middleware to all project routes
-projectRoutes.use(authMiddleware);
+// projectRoutes.use(authMiddleware);
 
 projectRoutes.post("/", roleMiddleware([UserRole.ADMIN]), projectController.createProject);
 projectRoutes.get("/", projectController.getAllProjects);
-projectRoutes.get("/:projectid", projectController.getProjectById);
+// projectRoutes.get("/:projectid", projectController.getProjectById);
 
 /**
  * Task-related routes nested under projects

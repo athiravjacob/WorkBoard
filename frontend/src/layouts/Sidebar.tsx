@@ -12,12 +12,10 @@ import { useLogout } from '../features/auth/hooks/useLogout';
 
 const menuItems = [
   { name: 'Dashboard', path: '/dashboard', icon: LayoutDashboard, roles: ['ADMIN', 'PM', 'USER'] },
-  { name: 'All Projects', path: '/admin/projects', icon: Briefcase, roles: ['ADMIN'] },
-  { name: 'My Managed Projects', path: '/pm/projects', icon: Briefcase, roles: ['PM'] },
-  { name: 'Team Management', path: '/admin/users', icon: Users, roles: ['ADMIN'] },
-  { name: 'My Tasks', path: '/tasks', icon: ListTodo, roles: ['USER'] },
-  { name: 'Tasks', path: '/tasks', icon: ListTodo, roles: ['PM'] },
-  { name: 'Chat', path: '/chat', icon: MessageSquare, roles: ['ADMIN', 'PM', 'USER'] },
+  { name: 'Projects', path: '/admin/projects', icon: Briefcase, roles: ['ADMIN', 'PM'] },
+  { name: 'Users', path: '/admin/users', icon: Users, roles: ['ADMIN'] },
+  { name: 'Tasks', path: '/tasks', icon: ListTodo, roles: ['USER'] },
+  { name: 'Messages', path: '/chat', icon: MessageSquare, roles: ['ADMIN', 'PM', 'USER'] },
 ];
 
 export const Sidebar = () => {
@@ -45,7 +43,7 @@ export const Sidebar = () => {
         <div className="space-y-1">
           <p className="px-3 text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2">Main Menu</p>
           {filteredLinks.map((link) => {
-            const isActive = location.pathname === link.path;
+            const isActive = location.pathname.startsWith(link.path);
             const Icon = link.icon;
             
             return (
