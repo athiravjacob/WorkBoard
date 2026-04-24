@@ -3,12 +3,14 @@ import { AuthRequest } from '../middlewares/AuthMiddleware';
 import { CreateTaskUseCase } from '../../application/use-cases/task/CreateTask';
 import { GetTasksByProjectUseCase } from '../../application/use-cases/task/GetTasksByProject';
 import { GetMyTasksUseCase } from '../../application/use-cases/task/GetMyTasks';
+import { UpdateTaskStatusUseCase } from '../../application/use-cases/task/UpdateTaskStatus';
 
 export class TaskController {
     constructor(
         private createTaskUseCase: CreateTaskUseCase,
         private getTasksByProjectUseCase: GetTasksByProjectUseCase,
-        private getMyTasksUseCase: GetMyTasksUseCase
+        private getMyTasksUseCase: GetMyTasksUseCase,
+        private updateTaskStatusUseCase: UpdateTaskStatusUseCase
     ) {}
 
     /**
@@ -23,11 +25,22 @@ export class TaskController {
             { title, description, projectId, assignedTo },
             actor
         );
-
+        
         res.status(201).json({
             success: true,
             message: "Task created successfully",
-            taskId: task.id
+            task: {
+              id: task.id,
+              title: task.title,
+              description: task.description,
+              status: task.status,
+              projectId: task.projectId,
+              assignedTo: task.assignedTo,
+              assignedToDetails: task.assignedToDetails,
+              projectDetails: task.projectDetails,
+              createdAt: task.createdAt,
+              updatedAt: task.updatedAt
+            }
         });
     }
 
@@ -45,7 +58,18 @@ export class TaskController {
 
         res.status(200).json({
             success: true,
-            data: tasks
+            data: tasks.map(task => ({
+              id: task.id,
+              title: task.title,
+              description: task.description,
+              status: task.status,
+              projectId: task.projectId,
+              assignedTo: task.assignedTo,
+              assignedToDetails: task.assignedToDetails,
+              projectDetails: task.projectDetails,
+              createdAt: task.createdAt,
+              updatedAt: task.updatedAt
+            }))
         });
     }
 
@@ -59,7 +83,37 @@ export class TaskController {
 
         res.status(200).json({
             success: true,
-            data: tasks
+            data: tasks.map(task => ({
+              id: task.id,
+              title: task.title,
+              description: task.description,
+              status: task.status,
+              projectId: task.projectId,
+              assignedTo: task.assignedTo,
+              assignedToDetails: task.assignedToDetails,
+              projectDetails: task.projectDetails,
+              createdAt: task.createdAt,
+              updatedAt: task.updatedAt
+            }))
+        });
+    }
+
+    /**
+     * PATCH /tasks/:taskId/status
+     */
+    updateStatus = async (req: AuthRequest<{ taskId: string }>, res: Response, next: NextFunction) => {
+        const { taskId } = req.params;
+        const { status, redoNote } = req.body;
+        const actor = req.user!;
+
+        await this.updateTaskStatusUseCase.execute(
+            { taskId, status, redoNote },
+            actor
+        );
+
+        res.status(200).json({
+            success: true,
+            message: "Task status updated successfully"
         });
     }
 }

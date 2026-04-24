@@ -19,8 +19,19 @@ type Actor = {
     role: UserRole;
 };
 
+export interface UserDetails {
+    name: string;
+    email: string;
+}
+
+export interface ProjectDetails {
+    title: string;
+}
+
 export class Task {
     private _progressNotes: TaskProgress[] = [];
+    private _assignedToDetails?: UserDetails;
+    private _projectDetails?: ProjectDetails;
 
     private constructor(
         public readonly id: string,
@@ -30,8 +41,13 @@ export class Task {
         private _projectId: string,
         private _assignedTo: string,
         private _createdAt: Date,
-        private _updatedAt: Date
-    ) {}
+        private _updatedAt: Date,
+        assignedToDetails?: UserDetails,
+        projectDetails?: ProjectDetails
+    ) {
+        this._assignedToDetails = assignedToDetails;
+        this._projectDetails = projectDetails;
+    }
 
     // 🔍 Getters
     get title(): string { return this._title; }
@@ -42,6 +58,14 @@ export class Task {
     get createdAt(): Date { return this._createdAt; }
     get updatedAt(): Date { return this._updatedAt; }
     get progressNotes(): TaskProgress[] { return [...this._progressNotes]; }
+    
+    get assignedToDetails(): UserDetails | undefined { 
+        return this._assignedToDetails; 
+    }
+
+    get projectDetails(): ProjectDetails | undefined {
+        return this._projectDetails;
+    }
 
     // ✅ Factory: Create new task
     public static create(params: {
@@ -88,6 +112,8 @@ export class Task {
         createdAt: Date;
         updatedAt: Date;
         progressNotes: TaskProgress[];
+        assignedToDetails?: UserDetails; 
+        projectDetails?: ProjectDetails;
     }): Task {
 
         if (!params.title.trim()) throw new Error("Invalid title from DB");
@@ -102,7 +128,9 @@ export class Task {
             params.projectId,
             params.assignedTo,
             params.createdAt,
-            params.updatedAt
+            params.updatedAt,
+            params.assignedToDetails,
+            params.projectDetails
         );
 
         task._progressNotes = [...params.progressNotes]; 
@@ -225,7 +253,6 @@ export class Task {
         this.markUpdated();
     }
 
-    // 📝 Add progress / audit note
     public addProgressNote(actor: Actor, note: string): void {
         if (
             actor.id !== this._assignedTo &&

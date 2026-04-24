@@ -51,7 +51,6 @@ export class ProjectController {
 
   public getManagedProjects = async (req: any, res: Response): Promise<void> => {
     try {
-      console.log("hello get managed project")
       const pmId = req.user.id;
       const projects = await this.listManagedProjectsUseCase.execute(pmId);
       

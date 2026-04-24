@@ -1,7 +1,5 @@
 import { Router } from 'express';
 import { authMiddleware } from '../middlewares/AuthMiddleware';
-import { roleMiddleware } from '../middlewares/RoleMiddleware';
-import { UserRole } from '../../domain/entities/User';
 import { taskController } from '../../infrastructure/config/di';
 
 const router = Router();
@@ -16,6 +14,15 @@ router.use(authMiddleware);
 router.get(
     "/me", 
     taskController.getMyTasks
+);
+
+/**
+ * @route   PATCH /api/tasks/:taskId/status
+ * @desc    Update the status of a specific task
+ */
+router.patch(
+    "/:taskId/status",
+    taskController.updateStatus
 );
 
 export { router as taskRoutes };

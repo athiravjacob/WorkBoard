@@ -2,6 +2,7 @@ import React from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useProject } from '../hooks/useProject';
 import { useProjectTasks } from '../../tasks/hooks/useProjectTasks';
+import { CreateTaskModal } from '../../tasks/components/CreateTaskModal';
 import { useAuthStore } from '../../auth/store/useAuthStore';
 import { 
   ChevronRight, 
@@ -18,6 +19,7 @@ import {
 export const ProjectDetailPage: React.FC = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { user: currentUser } = useAuthStore();
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
   
   const { data: project, isLoading: isProjectLoading, isError: isProjectError } = useProject(projectId);
   const { data: tasks, isLoading: isTasksLoading } = useProjectTasks(projectId);
@@ -77,7 +79,10 @@ export const ProjectDetailPage: React.FC = () => {
         </div>
 
         {isPM && (
-          <button className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:scale-95">
+          <button 
+            onClick={() => setIsModalOpen(true)}
+            className="inline-flex items-center justify-center px-6 py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg shadow-indigo-100 hover:bg-indigo-700 hover:-translate-y-0.5 transition-all active:scale-95"
+          >
             <Plus className="w-5 h-5 mr-2" />
             Create Task
           </button>
@@ -116,14 +121,15 @@ export const ProjectDetailPage: React.FC = () => {
                         <h3 className="font-bold text-slate-800 group-hover:text-indigo-700 transition-colors">
                           {task.title}
                         </h3>
-                        <div className="flex items-center text-xs text-slate-400 font-medium">
-                           <UserIcon className="w-3 h-3 mr-1" />
-                           {task.assignedTo?.name || 'Unassigned'}
-                        </div>
+                       <div className="flex items-center text-xs text-slate-400 font-medium">
+  <UserIcon className="w-3 h-3 mr-1" />
+  {/* Check assignedToDetails instead of assignedTo */}
+  {task.assignedToDetails?.name || 'Unassigned'}
+</div>
                       </div>
                       <span className={`flex items-center px-3 py-1 rounded-full text-[10px] font-bold border ${getStatusStyles(task.status)} uppercase tracking-wider`}>
                         {getStatusIcon(task.status)}
-                        <span className="ml-1.5">{task.status.replace('_', ' ')}</span>
+                        <span className="ml-1.5">{(task.status || '').replace('_', ' ')}</span>
                       </span>
                     </div>
                   </div>
@@ -186,6 +192,14 @@ export const ProjectDetailPage: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {projectId && (
+        <CreateTaskModal 
+          projectId={projectId}
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
+      )}
     </div>
   );
 };

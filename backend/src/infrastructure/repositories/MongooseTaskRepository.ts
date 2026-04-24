@@ -11,29 +11,43 @@ export class MongooseTaskRepository implements ITaskRepository {
         await TaskModel.findOneAndUpdate(
             { _id: task.id },
             persistence,
-            { upsert: true, new: true }
-        );
+            { 
+                upsert: true, 
+                returnDocument: 'after' // Replaces new: true
+            }
+        ).exec(); 
     }
 
     async findById(id: string): Promise<Task | null> {
-        const doc = await TaskModel.findById(id);
+        const doc = await TaskModel.findById(id).populate('assignedTo', 'name email').exec();
         if (!doc) return null;
         
         return TaskMapper.toDomain(doc);
     }
 
     async findByProjectId(projectId: string): Promise<Task[]> {
-        const docs = await TaskModel.find({ projectId }).sort({ createdAt: -1 });
+        const docs = await TaskModel.find({ projectId })
+        .populate('assignedTo', 'name email') 
+        .sort({ createdAt: -1 })
+        .exec();
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 
     async findByProjectIdAndAssignedTo(projectId: string, userId: string): Promise<Task[]> {
-        const docs = await TaskModel.find({ projectId, assignedTo: userId }).sort({ createdAt: -1 });
+        const docs = await TaskModel.find({ projectId, assignedTo: userId })
+        .populate('assignedTo', 'name email') 
+        .populate('projectId', 'title')
+        .sort({ createdAt: -1 })
+        .exec();
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 
     async findByAssignedTo(userId: string): Promise<Task[]> {
-        const docs = await TaskModel.find({ assignedTo: userId }).sort({ createdAt: -1 });
+        const docs = await TaskModel.find({ assignedTo: userId })
+        .populate('assignedTo', 'name email') 
+        .populate('projectId', 'title') // Populate project title for badge
+        .sort({ createdAt: -1 })
+        .exec();
         return docs.map(doc => TaskMapper.toDomain(doc));
     }
 

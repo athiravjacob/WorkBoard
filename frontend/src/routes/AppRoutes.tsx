@@ -5,6 +5,7 @@ import { DashboardLayout } from '../layouts/DashboardLayout';
 import { CreateProjectForm } from '../features/projects/components/CreateProjectForm';
 import { ProjectList } from '../features/projects/components/ProjectList';
 import { ProjectDetailPage } from '../features/projects/components/ProjectDetailPage';
+import { UserTasksPage } from '../features/tasks/components/UserTasksPage';
 
 // Enhanced placeholder components
 import { Dashboard } from '../features/dashboard/components/Dashboard';
@@ -20,6 +21,7 @@ export const AppRoutes = () => {
       <Route element={<ProtectedRoute />}>
         <Route path="/dashboard" element={<DashboardLayout><Dashboard /></DashboardLayout>} />
         <Route path="/projects/:projectId" element={<DashboardLayout><ProjectDetailPage /></DashboardLayout>} />
+        <Route path="/tasks" element={<DashboardLayout><UserTasksPage /></DashboardLayout>} />
       </Route>
 
       {/* Admin Only Routes */}

@@ -21,6 +21,7 @@ import { GetMyProfile } from '../../application/use-cases/user/GetMyProfile';
 import { CreateTaskUseCase } from '../../application/use-cases/task/CreateTask';
 import { GetTasksByProjectUseCase } from '../../application/use-cases/task/GetTasksByProject';
 import { GetMyTasksUseCase } from '../../application/use-cases/task/GetMyTasks';
+import { UpdateTaskStatusUseCase } from '../../application/use-cases/task/UpdateTaskStatus';
 import { TaskController } from '../../presentation/controllers/TaskController';
 
 // 1. Infrastructure Layer: Instantiate the implementations
@@ -79,6 +80,7 @@ const getTasksByProject = new GetTasksByProjectUseCase(
 );
 
 const getMyTasks = new GetMyTasksUseCase(taskRepository);
+const updateTaskStatus = new UpdateTaskStatusUseCase(taskRepository);
 
 
 // 3. Presentation Layer: Instantiate the controller, injecting the use case instance
@@ -93,5 +95,6 @@ export const projectController = new ProjectController(
 export const taskController = new TaskController(
   createTask,
   getTasksByProject,
-  getMyTasks
+  getMyTasks,
+  updateTaskStatus
 );
