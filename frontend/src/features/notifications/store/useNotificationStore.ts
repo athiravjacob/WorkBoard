@@ -2,10 +2,13 @@ import { create } from 'zustand';
 import { notificationService } from '../services/notificationService';
 import type { Notification } from '../services/notificationService';
 
-
 interface NotificationState {
   notifications: Notification[];
   unreadCount: number;
+  isLoading: boolean;
+  error: string | null;
+  
+  // Actions
   setNotifications: (notifications: Notification[]) => void;
   addNotification: (notification: Notification) => void;
   setUnreadCount: (count: number) => void;
@@ -15,11 +18,11 @@ interface NotificationState {
   fetchInitialData: () => Promise<void>;
 }
 
-
-export const useNotificationStore = create<NotificationState>((set) => ({
-
+export const useNotificationStore = create<NotificationState>((set, get) => ({
   notifications: [],
   unreadCount: 0,
+  isLoading: false,
+  error: null,
 
   setNotifications: (notifications) => set({ notifications }),
 
@@ -32,6 +35,8 @@ export const useNotificationStore = create<NotificationState>((set) => ({
   incrementUnread: () => set((state) => ({ unreadCount: state.unreadCount + 1 })),
 
   markAsRead: async (id) => {
+    const prevState = get();
+    
     // Optimistic update
     set((state) => ({
       notifications: state.notifications.map((notif) =>
@@ -43,13 +48,19 @@ export const useNotificationStore = create<NotificationState>((set) => ({
     try {
       await notificationService.markAsRead(id);
     } catch (error) {
-      // Revert if API fails (optional, but good practice)
       console.error('Failed to mark notification as read:', error);
-      // In a real app, you might want to refetch the data here
+      // Rollback on failure
+      set({ 
+        notifications: prevState.notifications,
+        unreadCount: prevState.unreadCount,
+        error: 'Failed to sync read status with server'
+      });
     }
   },
 
   markAllAsRead: async () => {
+    const prevState = get();
+    
     // Optimistic update
     set((state) => ({
       notifications: state.notifications.map((notif) => ({ ...notif, isRead: true })),
@@ -60,19 +71,26 @@ export const useNotificationStore = create<NotificationState>((set) => ({
       await notificationService.markAllAsRead();
     } catch (error) {
       console.error('Failed to mark all notifications as read:', error);
+      // Rollback on failure
+      set({ 
+        notifications: prevState.notifications,
+        unreadCount: prevState.unreadCount,
+        error: 'Failed to mark all as read'
+      });
     }
   },
 
   fetchInitialData: async () => {
-
+    set({ isLoading: true, error: null });
     try {
       const [notifications, unreadCount] = await Promise.all([
         notificationService.getNotifications(),
         notificationService.getUnreadCount()
       ]);
-      set({ notifications, unreadCount });
+      set({ notifications, unreadCount, isLoading: false });
     } catch (error) {
       console.error('Failed to fetch initial notifications:', error);
+      set({ isLoading: false, error: 'Failed to load notifications' });
     }
   }
 }));

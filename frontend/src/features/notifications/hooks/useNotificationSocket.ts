@@ -4,22 +4,21 @@ import { useNotificationStore } from '../store/useNotificationStore';
 import type { Notification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { NOTIFICATION_EVENTS } from '../constants';
+import { getNotificationRedirect } from '../utils/notificationUtils';
 
-const SOCKET_URL = 'http://localhost:5000'; // Should be in env in real app
+const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
 
+/**
+ * Headless hook responsible ONLY for managing the Socket.io connection and real-time events.
+ */
 export const useNotificationSocket = () => {
-  const { addNotification, incrementUnread, fetchInitialData } = useNotificationStore.getState();
+  // Use getState for stability in event handlers without triggering re-renders of the host component
+  const { addNotification, incrementUnread } = useNotificationStore.getState();
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
   const isAuthPage = ['/login', '/register'].includes(pathname);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token');
-    if (!token || isAuthPage) return;
-
-    fetchInitialData();
-  }, [fetchInitialData, isAuthPage]);
 
   useEffect(() => {
     const token = localStorage.getItem('token');
@@ -33,7 +32,7 @@ export const useNotificationSocket = () => {
       console.log('Socket connected for real-time notifications');
     });
 
-    socket.on('NEW_NOTIFICATION', (notification: Notification) => {
+    socket.on(NOTIFICATION_EVENTS.NEW_NOTIFICATION, (notification: Notification) => {
       console.log('Received real-time notification:', notification);
       
       // Update Store
@@ -46,13 +45,8 @@ export const useNotificationSocket = () => {
         action: {
           label: 'View',
           onClick: () => {
-            // Logic for redirecting based on type
-            if (notification.type === 'PROJECT_ASSIGNED') {
-              navigate(`/projects/${notification.relatedId}`);
-            } else {
-              // Default to tasks list or project context if applicable
-              navigate('/tasks');
-            }
+            const path = getNotificationRedirect(notification);
+            navigate(path);
           }
         }
       });
@@ -63,8 +57,8 @@ export const useNotificationSocket = () => {
     });
 
     return () => {
-      socket.off('NEW_NOTIFICATION');
+      socket.off(NOTIFICATION_EVENTS.NEW_NOTIFICATION);
       socket.disconnect();
     };
-  }, [addNotification, incrementUnread, navigate]);
+  }, [addNotification, incrementUnread, navigate, isAuthPage]);
 };

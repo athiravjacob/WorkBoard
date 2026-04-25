@@ -5,6 +5,8 @@ import { useNotificationStore } from '../store/useNotificationStore';
 import type { Notification } from '../services/notificationService';
 
 
+import { getNotificationRedirect } from '../utils/notificationUtils';
+
 interface NotificationItemProps {
   notification: Notification;
   onClose?: () => void;
@@ -21,12 +23,8 @@ export const NotificationItem: React.FC<NotificationItemProps> = ({ notification
 
     if (onClose) onClose();
 
-    // Navigation logic
-    if (notification.type === 'PROJECT_ASSIGNED') {
-      navigate(`/projects/${notification.relatedId}`);
-    } else {
-      navigate('/tasks');
-    }
+    const redirectPath = getNotificationRedirect(notification);
+    navigate(redirectPath);
   };
 
   const initials = notification.senderDetails?.name
