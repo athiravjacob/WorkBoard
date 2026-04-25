@@ -69,6 +69,7 @@ export const ProjectDetailPage: React.FC = () => {
   );
 
   if (!project) return <div>Project not found</div>;
+  
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
@@ -76,7 +77,12 @@ export const ProjectDetailPage: React.FC = () => {
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-4">
           <nav className="flex items-center space-x-2 text-sm font-medium text-slate-400">
-            <Link to="/admin/projects" className="hover:text-indigo-600 transition-colors">Projects</Link>
+            <Link 
+              to={user?.role === 'ADMIN' ? "/admin/projects" : "/projects"} 
+              className="hover:text-indigo-600 transition-colors"
+            >
+              Projects
+            </Link>
             <ChevronRight className="w-4 h-4" />
             <span className="text-slate-900 font-bold">{project.title}</span>
           </nav>

@@ -11,8 +11,8 @@ projectRoutes.use(authMiddleware);
 
 projectRoutes.post("/", roleMiddleware([UserRole.ADMIN]), projectController.createProject);
 projectRoutes.get("/managed", roleMiddleware([UserRole.PM]), projectController.getManagedProjects);
-projectRoutes.get("/", roleMiddleware([UserRole.ADMIN, UserRole.PM]), projectController.getAllProjects);
-projectRoutes.get("/:projectId", projectController.getProjectById);
+projectRoutes.get("/", roleMiddleware([UserRole.ADMIN]), projectController.getAllProjects);
+projectRoutes.get("/:projectId",roleMiddleware([UserRole.ADMIN,UserRole.PM]), projectController.getProjectById);
 
 /**
  * Task-related routes nested under projects

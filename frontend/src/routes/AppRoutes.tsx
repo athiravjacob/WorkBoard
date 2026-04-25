@@ -24,13 +24,15 @@ export const AppRoutes = () => {
         <Route path="/tasks" element={<DashboardLayout><UserTasksPage /></DashboardLayout>} />
       </Route>
 
-      {/* Project Routes (Admin & PM can view, only Admin can create) */}
-      <Route element={<ProtectedRoute allowedRoles={['ADMIN', 'PM']} />}>
-        <Route path="/admin/projects" element={<DashboardLayout><ProjectList /></DashboardLayout>} />
-      </Route>
-      
+      {/* Project Routes (Admin only can see all and create) */}
       <Route element={<ProtectedRoute allowedRoles={['ADMIN']} />}>
+        <Route path="/admin/projects" element={<DashboardLayout><ProjectList /></DashboardLayout>} />
         <Route path="/admin/projects/create" element={<DashboardLayout><CreateProjectForm /></DashboardLayout>} />
+      </Route>
+
+      {/* PM Project View (Managed projects only) */}
+      <Route element={<ProtectedRoute allowedRoles={['PM']} />}>
+        <Route path="/projects" element={<DashboardLayout><ProjectList /></DashboardLayout>} />
       </Route>
 
       {/* Default Redirect */}

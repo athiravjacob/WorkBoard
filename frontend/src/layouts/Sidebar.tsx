@@ -23,10 +23,16 @@ export const Sidebar = () => {
   const logout = useLogout();
   const location = useLocation();
 
-  // Filter links based on user role
-  const filteredLinks = menuItems.filter(link => 
-    user && link.roles.includes(user.role)
-  );
+  // Filter links based on user role and adjust paths if necessary
+  const filteredLinks = menuItems
+    .filter(link => user && link.roles.includes(user.role))
+    .map(link => {
+      // For Project Managers, steer them to the '/projects' route which filters data
+      if (link.name === 'Projects' && user?.role === 'PM') {
+        return { ...link, path: '/projects' };
+      }
+      return link;
+    });
 
   return (
     <aside className="w-64 bg-white border-r border-slate-200 flex flex-col fixed h-full z-20">

@@ -122,7 +122,7 @@ export const UserTasksPage: React.FC = () => {
                         disabled={isPending}
                         className="flex items-center gap-2 px-5 py-2.5 bg-slate-900 text-white rounded-2xl text-xs font-bold hover:bg-indigo-600 hover:-translate-y-0.5 transition-all active:scale-95 disabled:opacity-50 shadow-lg shadow-slate-200"
                       >
-                        {task.status === 'PENDING' ? 'Start Task' : 'Submit Review'}
+                        {task.status === 'PENDING' ? 'Start Task' : task.status === 'REDO' ? 'Redo' : 'Submit Review'}
                         <ChevronRight className="w-4 h-4" />
                       </button>
                     )}

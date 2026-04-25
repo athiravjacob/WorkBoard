@@ -35,8 +35,14 @@ export const ProjectList = () => {
       {/* Header Section */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <div>
-          <h1 className="text-3xl font-black text-slate-900 tracking-tight">Projects</h1>
-          <p className="text-slate-500 mt-1 font-medium">Manage and monitor all active workspace initiatives.</p>
+          <h1 className="text-3xl font-black text-slate-900 tracking-tight">
+            {currentUser?.role === 'ADMIN' ? 'All Projects' : 'My Managed Projects'}
+          </h1>
+          <p className="text-slate-500 mt-1 font-medium">
+            {currentUser?.role === 'ADMIN' 
+              ? 'Oversee and coordinate all active initiatives across the workspace.' 
+              : 'Focus on the initiatives you are currently leading and managing.'}
+          </p>
         </div>
         {currentUser?.role === 'ADMIN' && (
           <Link
