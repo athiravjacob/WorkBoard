@@ -1,13 +1,24 @@
 import { BrowserRouter } from 'react-router-dom';
-import { Toaster } from 'react-hot-toast';
-import { AppRoutes } from  './routes/AppRoutes'
+import { Toaster } from 'sonner';
+import { AppRoutes } from  './routes/AppRoutes';
+import { useNotificationSocket } from './features/notifications/hooks/useNotificationSocket';
+
+const AppContent = () => {
+  // Initialize notification socket listener
+  useNotificationSocket();
+
+  return (
+    <>
+      <Toaster position="top-right" richColors closeButton /> 
+      <AppRoutes />
+    </>
+  );
+};
 
 function App() {
   return (
     <BrowserRouter>
-      <Toaster position="top-right" /> 
-      
-      <AppRoutes />
+      <AppContent />
     </BrowserRouter>
   );
 }

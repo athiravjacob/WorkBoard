@@ -46,4 +46,22 @@ export class NotificationMapper {
       isRead: notification.isRead
     };
   }
+
+  /**
+   * Converts a Domain Notification entity to a plain DTO.
+   */
+  public static toDTO(notification: Notification): any {
+    return {
+      id: notification.id,
+      recipientId: notification.recipientId,
+      senderId: notification.senderId,
+      type: notification.type,
+      relatedId: notification.relatedId,
+      message: notification.message,
+      isRead: notification.isRead,
+      createdAt: notification.createdAt,
+      senderDetails: notification.senderDetails
+    };
+  }
 }
+

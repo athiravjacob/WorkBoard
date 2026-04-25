@@ -44,7 +44,10 @@ export class SocketServer {
           return next(new Error('Authentication error: Invalid token'));
         }
         
-        socket.data.user = decoded;
+        socket.data.user = {
+          id: decoded.userId,
+          role: decoded.role
+        };
         next();
       });
     });

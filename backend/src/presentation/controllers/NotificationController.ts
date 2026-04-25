@@ -1,15 +1,19 @@
 import { Request, Response } from 'express';
 import { GetNotificationsUseCase } from '../../application/use-cases/notification/GetNotifications';
 import { MarkAsReadUseCase } from '../../application/use-cases/notification/MarkAsRead';
+import { MarkAllAsReadUseCase } from '../../application/use-cases/notification/MarkAllAsRead';
 import { GetUnreadCountUseCase } from '../../application/use-cases/notification/GetUnreadCount';
+
 import { NotificationMapper } from '../../infrastructure/mappers/NotificationMapper';
 
 export class NotificationController {
   constructor(
     private getNotificationsUseCase: GetNotificationsUseCase,
     private markAsReadUseCase: MarkAsReadUseCase,
+    private markAllAsReadUseCase: MarkAllAsReadUseCase,
     private getUnreadCountUseCase: GetUnreadCountUseCase
   ) {}
+
 
   public getNotifications = async (req: Request, res: Response): Promise<void> => {
     try {
@@ -19,16 +23,7 @@ export class NotificationController {
 
       const notifications = await this.getNotificationsUseCase.execute(userId, limit, skip);
       
-      const dtos = notifications.map(notif => {
-        const persistence = NotificationMapper.toPersistence(notif);
-        // Ensure sender details are included if available in domain entity
-        return {
-          ...persistence,
-          id: persistence._id,
-          senderDetails: notif.senderDetails,
-          createdAt: notif.createdAt
-        };
-      });
+      const dtos = notifications.map(notif => NotificationMapper.toDTO(notif));
 
       res.status(200).json(dtos);
     } catch (error: any) {
@@ -61,4 +56,16 @@ export class NotificationController {
       res.status(status).json({ error: error.message || 'Failed to mark notification as read' });
     }
   };
+
+  public markAllAsRead = async (req: Request, res: Response): Promise<void> => {
+    try {
+      const userId = (req as any).user.id;
+      await this.markAllAsReadUseCase.execute(userId);
+      res.status(200).json({ message: 'All notifications marked as read' });
+    } catch (error: any) {
+      console.error('Mark all as read error:', error);
+      res.status(500).json({ error: 'Failed to mark all notifications as read' });
+    }
+  };
 }
+

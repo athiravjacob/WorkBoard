@@ -1,6 +1,7 @@
 import React from 'react';
 import { useAuthStore } from '../features/auth/store/useAuthStore';
 import { Sidebar } from './Sidebar';
+import { NotificationBell } from '../features/notifications/components/NotificationBell';
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -32,6 +33,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
 
           {/* Right Side: User Profile & Logout Link */}
           <div className="flex items-center space-x-6">
+            <NotificationBell />
+            
             <div className="flex items-center space-x-4">
               <div className="flex flex-col items-end">
                 <span className="text-sm font-bold text-slate-800 leading-tight">{user?.name || 'Loading...'}</span>

@@ -207,7 +207,7 @@ export const ProjectDetailPage: React.FC = () => {
                 Team Members
               </h3>
               <div className="space-y-4">
-                 {project.teamMembers?.map((member) => (
+                 {project.teamMembers?.map((member: any) => (
                     <div key={member.id} className="flex items-center justify-between group">
                        <div className="flex items-center space-x-3">
                           <div className="w-8 h-8 bg-slate-50 rounded-xl flex items-center justify-center text-slate-500 text-xs font-bold group-hover:bg-indigo-50 group-hover:text-indigo-600 transition-colors">

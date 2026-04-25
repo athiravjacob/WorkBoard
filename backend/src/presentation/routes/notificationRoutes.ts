@@ -20,6 +20,12 @@ router.get('/', notificationController.getNotifications);
 router.get('/unread-count', notificationController.getUnreadCount);
 
 /**
+ * @route   PATCH /api/notifications/read-all
+ * @desc    Mark all notifications for the user as read
+ */
+router.patch('/read-all', notificationController.markAllAsRead);
+
+/**
  * @route   PATCH /api/notifications/:id/read
  * @desc    Mark a specific notification as read
  */

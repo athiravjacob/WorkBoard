@@ -3,6 +3,7 @@ import { CreateNotificationUseCase } from '../use-cases/notification/CreateNotif
 import { NotificationType } from '../../domain/entities/Notification';
 import { TaskStatus } from '../../domain/entities/Task';
 import { ISocketService } from '../services/ISocketService';
+import { NotificationMapper } from '../../infrastructure/mappers/NotificationMapper';
 
 export class NotificationSubscriber {
   constructor(
@@ -30,7 +31,7 @@ export class NotificationSubscriber {
         });
 
         if (notification) {
-          this.socketService.sendNotification(data.pmId, notification);
+          this.socketService.sendNotification(data.pmId, NotificationMapper.toDTO(notification));
         }
       } catch (error) {
         console.error('Error handling PROJECT_ASSIGNED event:', error);
@@ -54,7 +55,7 @@ export class NotificationSubscriber {
         });
 
         if (notification) {
-          this.socketService.sendNotification(data.assignedToId, notification);
+          this.socketService.sendNotification(data.assignedToId, NotificationMapper.toDTO(notification));
         }
       } catch (error) {
         console.error('Error handling TASK_ASSIGNED event:', error);
@@ -86,7 +87,7 @@ export class NotificationSubscriber {
           });
 
           if (notification) {
-            this.socketService.sendNotification(data.pmId, notification);
+            this.socketService.sendNotification(data.pmId, NotificationMapper.toDTO(notification));
           }
         } else if (data.newStatus === TaskStatus.REDO) {
           // Notify Assigned User
@@ -99,7 +100,7 @@ export class NotificationSubscriber {
           });
 
           if (notification) {
-            this.socketService.sendNotification(data.assignedToId, notification);
+            this.socketService.sendNotification(data.assignedToId, NotificationMapper.toDTO(notification));
           }
         } else if (data.newStatus === TaskStatus.COMPLETED) {
           // Notify Assigned User
@@ -112,7 +113,7 @@ export class NotificationSubscriber {
           });
 
           if (notification) {
-            this.socketService.sendNotification(data.assignedToId, notification);
+            this.socketService.sendNotification(data.assignedToId, NotificationMapper.toDTO(notification));
           }
         }
       } catch (error) {

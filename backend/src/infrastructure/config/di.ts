@@ -30,7 +30,9 @@ import { AddTaskNoteUseCase } from '../../application/use-cases/task/AddTaskNote
 import { CreateNotificationUseCase } from '../../application/use-cases/notification/CreateNotification';
 import { GetNotificationsUseCase } from '../../application/use-cases/notification/GetNotifications';
 import { MarkAsReadUseCase } from '../../application/use-cases/notification/MarkAsRead';
+import { MarkAllAsReadUseCase } from '../../application/use-cases/notification/MarkAllAsRead';
 import { GetUnreadCountUseCase } from '../../application/use-cases/notification/GetUnreadCount';
+
 import { NotificationSubscriber } from '../../application/subscribers/NotificationSubscriber';
 import { TaskController } from '../../presentation/controllers/TaskController';
 import { NotificationController } from '../../presentation/controllers/NotificationController';
@@ -104,7 +106,9 @@ const addTaskNote = new AddTaskNoteUseCase(taskRepository);
 const createNotification = new CreateNotificationUseCase(notificationRepository, idGenerator);
 const getNotifications = new GetNotificationsUseCase(notificationRepository);
 const markAsRead = new MarkAsReadUseCase(notificationRepository);
+const markAllAsRead = new MarkAllAsReadUseCase(notificationRepository);
 const getUnreadCount = new GetUnreadCountUseCase(notificationRepository);
+
 
 new NotificationSubscriber(createNotification, socketService);
 
@@ -132,6 +136,8 @@ export const taskController = new TaskController(
 export const notificationController = new NotificationController(
   getNotifications,
   markAsRead,
+  markAllAsRead,
   getUnreadCount
 );
+
 
