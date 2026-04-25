@@ -4,6 +4,8 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { IIdGeneratorService } from "../../services/IIdGeneratorService";
 import { Task } from "../../../domain/entities/Task";
 import { UserRole } from "../../../domain/entities/User";
+import { eventBus, WORKBOARD_EVENTS } from "../../../infrastructure/events/eventBus";
+
 
 export interface CreateTaskDTO {
     title: string;
@@ -60,11 +62,23 @@ export class CreateTaskUseCase {
             assignedTo: dto.assignedTo
         });
 
-        // Note: The actor here is the PM (the one who created it)
+        // 7. Add assigned user to project team members if not already there
+        project.addTeamMember(dto.assignedTo);
+        await this.projectRepository.update(project);
+
+        // 8. Note: The actor here is the PM (the one who created it)
         task.addProgressNote(actor, "[CREATED] Task created and assigned.");
 
-        // 8. Persist task to repository
+        // 9. Persist task to repository
         await this.taskRepository.save(task);
+
+        // 10. Emit TASK_ASSIGNED event
+        eventBus.emit(WORKBOARD_EVENTS.TASK_ASSIGNED, {
+            taskId: task.id,
+            taskTitle: task.title,
+            assignedToId: task.assignedTo,
+            pmId: actor.id
+        });
 
         return task;
     }

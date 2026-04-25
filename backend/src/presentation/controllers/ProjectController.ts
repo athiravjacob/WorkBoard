@@ -2,7 +2,7 @@ import { Request, Response } from "express";
 import { CreateProjectDTO } from "../../application/use-cases/project/CreateProject";
 
 export interface ICreateProjectUseCase {
-  execute(data: CreateProjectDTO): Promise<any>;
+  execute(data: CreateProjectDTO, adminId: string): Promise<any>;
 }
 
 export interface IListAllProjectsUseCase {
@@ -65,7 +65,7 @@ export class ProjectController {
         title,
         description,
         pmCandidateId: pmId,
-      }); 
+      }, (req as any).user.id); 
 
       res.status(201).json({
         message: "Project created successfully",
