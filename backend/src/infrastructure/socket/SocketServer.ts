@@ -1,15 +1,13 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
-import jwt from 'jsonwebtoken';
+import { socketMiddleware } from './socketMiddleware';
+import { registerChatHandlers } from '../../presentation/socket/chatHandler';
 
 export class SocketServer {
   private static instance: SocketServer;
   private io: SocketIOServer | null = null;
-  private readonly accessSecret: string;
 
-  private constructor() {
-    this.accessSecret = process.env.JWT_ACCESS_SECRET || 'default_access_secret';
-  }
+  private constructor() {}
 
   public static getInstance(): SocketServer {
     if (!SocketServer.instance) {
@@ -31,38 +29,24 @@ export class SocketServer {
       }
     });
 
-    // Authentication Middleware
-    this.io.use((socket, next) => {
-      const token = socket.handshake.auth.token;
+    // Use centralized Secure Socket Middleware
+    this.io.use(socketMiddleware);
 
-      if (!token) {
-        return next(new Error('Authentication error: Token missing'));
-      }
-
-      jwt.verify(token, this.accessSecret, (err: any, decoded: any) => {
-        if (err) {
-          return next(new Error('Authentication error: Invalid token'));
-        }
-        
-        socket.data.user = {
-          id: decoded.userId,
-          role: decoded.role
-        };
-        next();
-      });
-    });
-
+    // Connection Logic
     this.io.on('connection', (socket) => {
       const userId = socket.data.user.id;
-      console.log(`User connected: ${userId} (Socket: ${socket.id})`);
+      console.log(`[Socket] User Arrived: ${userId} (SocketID: ${socket.id})`);
 
-      // Automatically join personal room
-      const roomName = `user:${userId}`;
+      // Register Handlers
+      registerChatHandlers(this.io!, socket);
+
+      // Automatically join private room: user:[userId]
+      const roomName = `user:[${userId}]`;
       socket.join(roomName);
-      console.log(`Socket ${socket.id} joined room: ${roomName}`);
+      console.log(`[Socket] User ${userId} joined private room: ${roomName}`);
 
       socket.on('disconnect', () => {
-        console.log(`User disconnected: ${userId} (Socket: ${socket.id})`);
+        console.log(`[Socket] User Left: ${userId} (SocketID: ${socket.id})`);
       });
     });
 

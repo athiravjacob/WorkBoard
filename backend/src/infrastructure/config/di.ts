@@ -2,6 +2,8 @@ import { MongooseUserRepository } from '../repositories/MongooseUserRepository';
 import { MongooseProjectRepository } from '../repositories/MongooseProjectRepository';
 import { MongooseNotificationRepository } from '../repositories/MongooseNotificationRepository';
 import { MongooseTaskRepository } from '../repositories/MongooseTaskRepository';
+import { MongooseChatRepository } from '../repositories/MongooseChatRepository';
+
 
 import { RegisterUser } from '../../application/use-cases/auth/RegisterUser';
 import { UserController } from '../../presentation/controllers/UserController';
@@ -32,6 +34,9 @@ import { GetNotificationsUseCase } from '../../application/use-cases/notificatio
 import { MarkAsReadUseCase } from '../../application/use-cases/notification/MarkAsRead';
 import { MarkAllAsReadUseCase } from '../../application/use-cases/notification/MarkAllAsRead';
 import { GetUnreadCountUseCase } from '../../application/use-cases/notification/GetUnreadCount';
+import { SendMessageUseCase } from '../../application/use-cases/chat/SendMessage.usecase';
+
+
 
 import { NotificationSubscriber } from '../../application/subscribers/NotificationSubscriber';
 import { TaskController } from '../../presentation/controllers/TaskController';
@@ -48,6 +53,8 @@ const hashService = new BcryptHashService();
 const idGenerator = new UuidGeneratorService();
 const tokenGenerator = new JwtTokenService();
 const socketService = new SocketService();
+const chatRepository = new MongooseChatRepository();
+
 
 
 
@@ -108,6 +115,11 @@ const getNotifications = new GetNotificationsUseCase(notificationRepository);
 const markAsRead = new MarkAsReadUseCase(notificationRepository);
 const markAllAsRead = new MarkAllAsReadUseCase(notificationRepository);
 const getUnreadCount = new GetUnreadCountUseCase(notificationRepository);
+
+// Chat Use Cases
+export const sendMessageUseCase = new SendMessageUseCase(chatRepository, idGenerator);
+
+
 
 
 new NotificationSubscriber(createNotification, socketService);
