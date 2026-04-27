@@ -1,6 +1,5 @@
 import { IChatRepository } from '../../../domain/repositories/IChatRepository';
 import { Message } from '../../../domain/entities/Chat';
-import { IIdGeneratorService } from '../../services/IIdGeneratorService';
 import { ConversationNotFoundError, UnauthorizedChatAccessException } from '../../errors/ChatErrors';
 
 
@@ -12,8 +11,7 @@ export interface SendMessageDTO {
 
 export class SendMessageUseCase {
   constructor(
-    private chatRepository: IChatRepository,
-    private idGenerator: IIdGeneratorService
+    private chatRepository: IChatRepository
   ) {}
 
   /**
@@ -24,7 +22,6 @@ export class SendMessageUseCase {
   async execute(dto: SendMessageDTO): Promise<{ message: Message; conversation: any }> {
     const { senderId, conversationId, text } = dto;
 
-    // Logic Step 1 (Security): Fetch conversation and check participation
     const conversation = await this.chatRepository.findConversationById(conversationId);
     
     if (!conversation) {
@@ -35,22 +32,18 @@ export class SendMessageUseCase {
       throw new UnauthorizedChatAccessException();
     }
 
-    // Logic Step 2 (Persistence): Save
     const message = new Message(
-      this.idGenerator.generate(),
+      '', // MongoDB will generate the ObjectId
       conversationId,
       senderId,
       text,
-      false, // isRead starts at false
+      false,
       new Date()
     );
 
     const savedMessage = await this.chatRepository.saveMessage(message);
-
-    // Logic Step 3 (Integrity): Update conversation
     await this.chatRepository.updateLastMessage(conversationId, savedMessage.id);
-
-    // Logic Step 4 (Output): Return both for socket handling
+    
     return {
       message: savedMessage,
       conversation

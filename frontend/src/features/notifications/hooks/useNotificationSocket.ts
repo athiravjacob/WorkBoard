@@ -1,19 +1,17 @@
 import { useEffect } from 'react';
-import { io, Socket } from 'socket.io-client';
 import { useNotificationStore } from '../store/useNotificationStore';
 import type { Notification } from '../services/notificationService';
 import { toast } from 'sonner';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { NOTIFICATION_EVENTS } from '../constants';
 import { getNotificationRedirect } from '../utils/notificationUtils';
-
-const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || 'http://localhost:5000';
+import { socketService } from '../../../lib/socketService';
 
 /**
- * Headless hook responsible ONLY for managing the Socket.io connection and real-time events.
+ * Headless hook responsible ONLY for managing real-time notification events.
+ * Utilizes the centralized socketService for connection management.
  */
 export const useNotificationSocket = () => {
-  // Use getState for stability in event handlers without triggering re-renders of the host component
   const { addNotification, incrementUnread } = useNotificationStore.getState();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -24,22 +22,14 @@ export const useNotificationSocket = () => {
     const token = localStorage.getItem('token');
     if (!token || isAuthPage) return;
 
-    const socket: Socket = io(SOCKET_URL, {
-      auth: { token }
-    });
+    socketService.connect(token);
 
-    socket.on('connect', () => {
-      console.log('Socket connected for real-time notifications');
-    });
-
-    socket.on(NOTIFICATION_EVENTS.NEW_NOTIFICATION, (notification: Notification) => {
+    socketService.on(NOTIFICATION_EVENTS.NEW_NOTIFICATION, (notification: Notification) => {
       console.log('Received real-time notification:', notification);
       
-      // Update Store
       addNotification(notification);
       incrementUnread();
 
-      // Trigger Sonner Toast
       toast(notification.senderDetails?.name || 'New Notification', {
         description: notification.message,
         action: {
@@ -52,13 +42,10 @@ export const useNotificationSocket = () => {
       });
     });
 
-    socket.on('connect_error', (error) => {
-      console.error('Socket connection error:', error);
-    });
-
     return () => {
-      socket.off(NOTIFICATION_EVENTS.NEW_NOTIFICATION);
-      socket.disconnect();
+      socketService.off(NOTIFICATION_EVENTS.NEW_NOTIFICATION);
+      // We don't disconnect here because other features (like Chat) might still need it.
+      // Disconnect is handled on logout or app unmount if desired.
     };
   }, [addNotification, incrementUnread, navigate, isAuthPage]);
 };

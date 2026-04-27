@@ -2,13 +2,13 @@ import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IMessageDocument extends Document {
   conversationId: Types.ObjectId;
-  senderId: Types.ObjectId;
+  senderId: string;
   text: string;
   isRead: boolean;
   createdAt: Date;
 }
 
-const MessageSchema = new Schema<IMessageDocument>(
+const MessageSchema: Schema = new Schema(
   {
     conversationId: {
       type: Schema.Types.ObjectId,
@@ -16,7 +16,7 @@ const MessageSchema = new Schema<IMessageDocument>(
       required: true,
     },
     senderId: {
-      type: Schema.Types.ObjectId,
+      type: String,
       ref: 'User',
       required: true,
     },

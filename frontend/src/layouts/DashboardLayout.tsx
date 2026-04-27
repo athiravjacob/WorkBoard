@@ -5,9 +5,10 @@ import { NotificationBell } from '../features/notifications/components/Notificat
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
+  fullFrame?: boolean;
 }
 
-export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
+export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children, fullFrame = false }) => {
   const { user } = useAuthStore();
 
   const getInitial = (name: string) => {
@@ -56,8 +57,8 @@ export const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) =>
         </header>
 
         {/* Scrollable Content Area */}
-        <main className="flex-1 overflow-y-auto bg-slate-50/50 custom-scrollbar">
-          <div className="max-w-7xl mx-auto p-8">
+        <main className={`flex-1 overflow-hidden bg-slate-50/50 ${!fullFrame ? 'overflow-y-auto custom-scrollbar' : ''}`}>
+          <div className={fullFrame ? "h-full w-full" : "max-w-7xl mx-auto p-8"}>
             {children}
           </div>
         </main>

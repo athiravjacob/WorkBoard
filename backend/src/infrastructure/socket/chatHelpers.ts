@@ -7,13 +7,9 @@ import { Types } from 'mongoose';
  */
 export const isParticipant = async (userId: string, conversationId: string): Promise<boolean> => {
   try {
-    if (!Types.ObjectId.isValid(userId) || !Types.ObjectId.isValid(conversationId)) {
-      return false;
-    }
-
     const conversation = await ConversationModel.findOne({
-      _id: conversationId,
-      participants: new Types.ObjectId(userId)
+      _id: new Types.ObjectId(conversationId),
+      participants: userId
     });
 
     return !!conversation;

@@ -1,17 +1,17 @@
 import mongoose, { Schema, Document, Types } from 'mongoose';
 
 export interface IConversationDocument extends Document {
-  participants: Types.ObjectId[];
+  participants: string[];
   lastMessage?: Types.ObjectId;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const ConversationSchema = new Schema<IConversationDocument>(
+const ConversationSchema: Schema = new Schema(
   {
     participants: [
       {
-        type: Schema.Types.ObjectId,
+        type: String,
         ref: 'User',
         required: true,
       },
@@ -26,7 +26,7 @@ const ConversationSchema = new Schema<IConversationDocument>(
   }
 );
 
-// Index to quickly find conversations for a user
+// Index for performance
 ConversationSchema.index({ participants: 1 });
 
 export const ConversationModel = mongoose.model<IConversationDocument>('Conversation', ConversationSchema);

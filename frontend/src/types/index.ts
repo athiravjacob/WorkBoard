@@ -5,11 +5,12 @@ export interface User {
   name: string;
   email: string;
   role: Role;
+  avatar?: string;
 }
 
 export interface LoginResponse {
+
   message: string;
   user: User;
   accessToken: string; 
 }
-

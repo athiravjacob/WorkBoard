@@ -44,6 +44,13 @@ import { NotificationController } from '../../presentation/controllers/Notificat
 
 
 
+import { ListConversations } from '../../application/use-cases/chat/ListConversations';
+import { GetOrCreateConversation } from '../../application/use-cases/chat/GetOrCreateConversation';
+import { GetMessages } from '../../application/use-cases/chat/GetMessages';
+import { ChatController } from '../../presentation/controllers/ChatController';
+
+
+
 // 1. Infrastructure Layer: Instantiate the implementations
 const userRepository = new MongooseUserRepository();
 const projectRepository = new MongooseProjectRepository();
@@ -117,7 +124,10 @@ const markAllAsRead = new MarkAllAsReadUseCase(notificationRepository);
 const getUnreadCount = new GetUnreadCountUseCase(notificationRepository);
 
 // Chat Use Cases
-export const sendMessageUseCase = new SendMessageUseCase(chatRepository, idGenerator);
+export const sendMessageUseCase = new SendMessageUseCase(chatRepository);
+const listConversations = new ListConversations(chatRepository);
+const getOrCreateConversation = new GetOrCreateConversation(chatRepository);
+const getMessages = new GetMessages(chatRepository);
 
 
 
@@ -150,6 +160,13 @@ export const notificationController = new NotificationController(
   markAsRead,
   markAllAsRead,
   getUnreadCount
+);
+
+export const chatController = new ChatController(
+  listConversations,
+  getOrCreateConversation,
+  getMessages,
+  sendMessageUseCase
 );
 
 

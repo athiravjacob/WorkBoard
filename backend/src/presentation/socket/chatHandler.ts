@@ -6,37 +6,52 @@ import { sendMessageUseCase } from '../../infrastructure/config/di';
  */
 export const registerChatHandlers = (io: Server, socket: Socket) => {
   
+  socket.on('JOIN_CONVERSATION', (conversationId: string) => {
+    try {
+      if (!conversationId) return;
+      const room = conversationId.toString();
+      socket.join(room);
+      console.log(`[ChatSync] User ${socket.data.user.id} joined room ${room}`);
+    } catch (error: any) {
+      if (error.name === 'BSONError' || error.name === 'CastError') {
+        console.error('[ChatSync] ID Format Mismatch in JOIN_CONVERSATION:', error.message);
+      }
+      console.error('[ChatSync] Error joining room:', error.message);
+    }
+  });
+
   socket.on('SEND_MESSAGE', async (data: { conversationId: string; text: string }) => {
     try {
       const senderId = socket.data.user.id;
 
       if (!data.conversationId || !data.text) {
-        return socket.emit('MESSAGE_ERROR', { reason: 'Conversation ID and text are required' });
+        return socket.emit('MESSAGE_ERROR', { 
+          reason: 'Conversation ID and text are required',
+          conversationId: data.conversationId,
+          text: data.text
+        });
       }
 
-      // 1. Execute Send Message Use Case
-      // Returns { message: Message, conversation: Conversation }
-      const { message, conversation } = await sendMessageUseCase.execute({
+      const { message } = await sendMessageUseCase.execute({
         senderId,
         conversationId: data.conversationId,
         text: data.text
       });
 
-      // 2. Delivery Logic (Direct to Participant Rooms)
-      // The payload includes the full message object (with senderDetails) and conversationId
-      const payload = {
-        ...message,
-        conversationId: data.conversationId
-      };
-
-      conversation.participants.forEach((participantId: string) => {
-        // Emit RECEIVE_MESSAGE to each participant's specific room: user:[id]
-        io.to(`user:[${participantId}]`).emit('RECEIVE_MESSAGE', payload);
-      });
+      // Emit to the conversation-specific room
+      const room = data.conversationId.toString();
+      io.to(room).emit('RECEIVE_MESSAGE', message);
 
     } catch (error: any) {
+      if (error.name === 'BSONError' || error.name === 'CastError') {
+        console.error('[ChatSync] ID Format Mismatch in SEND_MESSAGE:', error.message);
+      }
       console.error('[ChatHandler] Error in SEND_MESSAGE:', error.message);
-      socket.emit('MESSAGE_ERROR', { reason: error.message || 'Failed to send message' });
+      socket.emit('MESSAGE_ERROR', { 
+        reason: error.message || 'Failed to send message',
+        conversationId: data.conversationId,
+        text: data.text
+      });
     }
   });
 };
