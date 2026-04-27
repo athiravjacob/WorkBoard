@@ -36,6 +36,9 @@ export class CreateNotificationUseCase {
     );
 
     await this.notificationRepository.save(notification);
-    return notification;
+
+    // Fetch populated version to include senderDetails for real-time notifications
+    const populated = await this.notificationRepository.findById(notification.id);
+    return populated || notification;
   }
 }

@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
 import { useUsers } from '../../users/hooks/useUsers';
 import { useCreateProject } from '../hooks/useCreateProject';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
+
 
 export const CreateProjectForm = () => {
   const [title, setTitle] = useState('');

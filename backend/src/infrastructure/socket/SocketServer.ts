@@ -40,8 +40,8 @@ export class SocketServer {
       // Register Handlers
       registerChatHandlers(this.io!, socket);
 
-      // Automatically join private room: user:[userId]
-      const roomName = `user:[${userId}]`;
+      // Automatically join private room: user:${userId}
+      const roomName = `user:${userId}`;
       socket.join(roomName);
       console.log(`[Socket] User ${userId} joined private room: ${roomName}`);
 

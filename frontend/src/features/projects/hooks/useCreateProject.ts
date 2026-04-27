@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { projectService } from '../services/projectService';
 import { useNavigate } from 'react-router-dom';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
+
 
 export const useCreateProject = () => {
   const navigate = useNavigate();

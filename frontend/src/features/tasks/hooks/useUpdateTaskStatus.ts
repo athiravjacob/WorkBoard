@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { taskService } from '../services/taskService';
-import { toast } from 'react-hot-toast';
+import { toast } from 'sonner';
+
 
 export const useUpdateTaskStatus = (projectId?: string) => {
   const queryClient = useQueryClient();
